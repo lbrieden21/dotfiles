@@ -1,0 +1,8 @@
+vim/vim/autoload
+vim/vim/backups
+vim/vim/plugged
+vim/vim/sessions
+vim/vim/swaps
+vim/vim/undo
+vim/vim/.netrwhist
+git-clones/

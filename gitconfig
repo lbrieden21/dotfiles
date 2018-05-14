@@ -1,0 +1,172 @@
+[alias]
+	df = diff --color --color-words --abbrev
+	ds = diff --color --color-words --staged
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --
+	s = status -s
+    patch = !"git --no-pager diff --no-color"
+
+    # Tools for iterative work
+    save = "!git add -A && git commit -m 'SAVEPOINT'"
+	undo = reset HEAD~1 --mixed
+
+    # Fix commits made to wrong branch
+    # http://haacked.com/archive/2015/06/29/git-migrate/
+    migrate = "!f(){ CURRENT=$(git symbolic-ref --short HEAD); git checkout -b $1 && git branch --force $CURRENT ${3-'$CURRENT@{u}'} && git rebase --onto ${2-master} $CURRENT; }; f"
+
+    # Mac Diff tool http://www.kaleidoscopeapp.com
+	# ksdiff = difftool -y -t Kaleidoscope
+
+	# Switch to a branch, creating it if necessary
+	go = "!f() { git checkout -b \"$1\" 2> /dev/null || git checkout \"$1\"; }; f"
+
+	# Show verbose output about tags, branches or remotes
+	tags = tag -l
+	branches = branch -l
+	branchesall = branch -a
+	remotes = remote -v
+
+	# Ammend the currently staged files to the latest commit
+	amend = commit --amend --reuse-message=HEAD
+
+	# Interactive rebase with the given number of latest commits
+	reb = "!r() { git rebase -i HEAD~$1; }; r"
+
+	# Find branches containing commit
+	fb = "!f() { git branch -a --contains $1; }; f"
+
+	# Find tags containing commit
+	ft = "!f() { git describe --always --contains $1; }; f"
+
+	# Find commits by source code
+	fc = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short -S$1; }; f"
+
+	# Find commits by commit message
+	fm = "!f() { git log --pretty=format:'%C(yellow)%h  %Cblue%ad  %Creset%s%Cgreen  [%cn] %Cred%d' --decorate --date=short --grep=$1; }; f"
+
+	# Remove branches that have already been merged with master
+	# a.k.a. ‘delete merged’
+    dm = "!git branch --no-color --merged | grep -v '\\*' | grep -v master | grep -v development | xargs -n 1 git branch -d"
+
+    # Show the diff and log of the last change for a file
+    # git lastchange package.json
+	lastchange = log -p --follow -n 1
+
+    # based on: https://gist.github.com/intel352/9761288
+    show-closest-branch = rev-parse --abbrev-ref HEAD
+    # based on: http://stackoverflow.com/questions/3161204/find-the-parent-branch-of-a-git-branch
+    show-closest-parent-branch = !"git show-branch -a --no-color 2> /dev/null | awk -F '[]^~[]' -v current_branch=`git show-closest-branch 2> /dev/null || true` 'BEGIN { rc=1 ; if ( length( current_branch ) == 0 ) { exit } } ( ( index( $1, \"*\" ) > 0 ) && ( length( $2 ) > 0 ) && ( $2 != current_branch ) ) { print $2 ; rc=0 ; exit } END { exit rc }'"
+    # short versions
+    #cb = !git show-closest-branch
+    #pb = !git show-closest-parent-branch
+
+    # open unmerged files in vim
+    edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
+    # add all the unmerged files
+    add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+
+    # List aliases
+    aliases = config --get-regexp alias
+	rm-deleted = !git rm $(git ls-files --deleted)
+
+[core]
+	excludesfile = ~/.gitignore_global
+
+[pager]
+    # insanely beautiful diffs ==> brew install diff-so-fancy
+	# diff = diff-so-fancy | less --tabs=4 -RFX
+	# show = diff-so-fancy | less --tabs=4 -RFX
+
+[interactive]
+    # this broke when upgrading git
+    # https://github.com/so-fancy/diff-so-fancy/issues/296
+    # diffFilter = "diff-so-fancy"
+
+[difftool "Kaleidoscope"]
+	# cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
+
+[diff]
+	# Detect copies as well as renames
+	renames = copies
+	# (git 2.9+) Set this option to `true` to enable an experimental heuristic that
+	# shifts the hunk boundary in an attempt to make the resulting
+	# patch easier to read.
+	compactionHeuristic = true
+
+[color]
+    ui = auto
+[color "diff"]
+	meta = yellow bold
+	commit = green bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+	whitespace = red reverse
+[color "diff-highlight"]
+	oldNormal = red bold
+	oldHighlight = "red bold 52"
+	newNormal = "green bold"
+	newHighlight = "green bold 22"
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[merge]
+	# Include summaries of merged commits in newly created merge commit messages
+	log = true
+
+# correct typos
+[help]
+	autocorrect = 1
+
+[filter "media"]
+	clean = git media clean %f
+	smudge = git media smudge %f
+	required = true
+
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+
+# Any GitHub repo with my username should be checked out r/w by default
+# http://rentzsch.tumblr.com/post/564806957/public-but-hackable-git-submodules
+
+# [url "git@github.com:lbrieden21/"]
+#  insteadOf = "git://github.com/lbrieden21/"
+
+# URL shorthands
+# [url "git@github.com:"]
+# 	insteadOf = "gh:"
+# 	insteadOf = "git://github.com/"
+# 	pushInsteadOf = "github:"
+# 	pushInsteadOf = "git://github.com/"
+# 	pushInsteadOf = "https://github.com/"
+# [url "git@gist.github.com:"]
+# 	insteadOf = "gst:"
+# 	pushInsteadOf = "gist:"
+# 	pushInsteadOf = "git://gist.github.com/"
+# 	pushInsteadOf = "https://gist.github.com/"
+
+[push]
+	default = simple
+
+[fetch]
+    prune = true
+
+# [commit]
+#      # https://help.github.com/articles/signing-commits-using-gpg/
+#     gpgsign = true
+
+[remote]
+	pushdefault = origin
+
+# [branch]
+# 	autosetuprebase = always
+
+[include]
+    path = .localgitconfig
