@@ -1,0 +1,37 @@
+# Editor
+if type mvim >/dev/null 2>/dev/null; then
+	export VISUAL=mvim
+	export EDITOR="$VISUAL"
+	alias vi='mvim -v'
+	alias vim='mvim -v'
+elif type nvim >/dev/null 2>/dev/null; then
+	export VISUAL=nvim
+	export EDITOR="$VISUAL"
+	alias vi=nvim
+	alias vim=nvim
+elif type vim >/dev/null 2>/dev/null; then
+	export VISUAL=vim
+	export EDITOR="$VISUAL"
+	alias vi=vim
+else
+	export EDITOR=`which vi`
+fi
+
+# Not sure where these go in current format
+shopt -s histappend
+shopt -s extglob
+shopt -s histverify
+
+export HISTSIZE=100000
+export HISTFILESIZE=$HISTSIZE
+#export HISTCONTROL=erasedups:ignorespace
+export HISTCONTROL=ignoredups
+
+# Don’t clear the screen after quitting a manual page
+export MANPAGER="less -X"
+
+# FIXME this really should be machine/system vs hostname based
+if [[ $HOSTNAME = 'Server1' || $HOSTNAME = 'MediaPlayer1' ]]; then
+	export TERM='xterm'
+	export COLORTERM='gnome-256color'
+fi

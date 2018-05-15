@@ -8,6 +8,19 @@ for file in ~/dotfiles/bash/{bash_prompt,path,dir_colors,exports,aliases,functio
 done
 unset file
 
+# bash completion (***NOTE may make sense to make this load all bash completion files it finds)
+if type port >/dev/null 2>/dev/null && [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
+	. /opt/local/etc/profile.d/bash_completion.sh
+elif [ -f /etc/bash_completion ]; then
+	 source /etc/bash_completion
+elif [ -f /etc/profile.d/bash-completion ]; then
+	source /etc/profile.d/bash-completion
+elif [ -f /etc/profile.d/bash_completion.sh ]; then
+	source /etc/profile.d/bash_completion.sh
+elif [ -f /usr/local/etc/bash_completion ]; then
+	source /usr/local/etc/bash_completion
+fi
+
 #if test -f ~/.gnupg/.gpg-agent-info -a -n "$(pgrep gpg-agent)"; then
 #  source ~/.gnupg/.gpg-agent-info
 #  export GPG_AGENT_INFO
@@ -40,5 +53,7 @@ unset file
 #  --color info:254,prompt:37,spinner:108,pointer:235,marker:235
 #  '
 #fi
+
+[ -r ~/.extra ] && source ~/.extra
 
 test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_integration.`basename $SHELL`

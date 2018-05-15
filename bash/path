@@ -1,0 +1,11 @@
+PATH="$PATH:/usr/local/engtools/bin"
+PATH="$HOME/.composer/vendor/bin:$PATH"
+PATH="/usr/local/sbin:$PATH"
+
+# Macports bin directories
+if type port >/dev/null 2>/dev/null; then
+	PATH="/opt/local/bin:/opt/local/sbin:$PATH"
+fi
+
+# clean up any duplicates
+export PATH=$(echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++')

@@ -1,0 +1,139 @@
+#!/bin/bash
+function f() {
+	find . -name "$1"
+}
+
+function bak() {
+	cp "$1" "$1.bak"
+}
+
+function gh() {
+	history | grep "$1"
+}
+
+# Find a usable agent - fixes screen and tmux
+function ssh-reagent () {
+  export SSH_AUTH_SOCK=$(find /tmp/ssh-* -user `whoami` -name agent\* -printf '%T@ %p\n' 2>/dev/null | sort -k 1nr | sed 's/^[^ ]* //' | head -n 1)
+  if $(ssh-add -l > /dev/null) ; then
+    echo Found working SSH Agent:
+    ssh-add -l
+    return
+  fi
+  echo Cannot find ssh agent - maybe you should reconnect and forward it?
+}
+
+# UpdateSshConfig - switch whether to tunnel through proxy depending on current IP (should only be run on laptop)
+function ussh() {
+	local alchemyhosts="fs01sb fs01test cc01test jnkmas01 jnkagt01 jnkagt02 jnkagt03 db01sb fs01prod sisdb fs01ets db01ets db02ets fs02etsdev db03etsdev jmeter01ets dbbackup01"
+	if [[ -n $(ifconfig | grep ' 10.100.') ]]; then
+		for h in $alchemyhosts
+		do
+			/opt/local/bin/gsed -i -r -e "/^Host $h/,+1 s/\tProxyCommand/\t#ProxyCommand/" ~/.ssh/config
+		done
+	else
+		for h in $alchemyhosts
+		do
+			/opt/local/bin/gsed -i -r -e "/^Host $h/,+1 s/\t#ProxyCommand/\tProxyCommand/" ~/.ssh/config
+		done
+	fi
+	if [[ -n $(ifconfig | grep ' 192.168.8.') ]]; then
+		/opt/local/bin/gsed -i -r -e "/^Host server1/,+2 s/Hostname lb.dyndns-ip.com/Hostname 192.168.8.21/" ~/.ssh/config
+		/opt/local/bin/gsed -i -r -e "/^Host mediaplayer1/,+1 s/\tProxyCommand/\t#ProxyCommand/" ~/.ssh/config
+	else
+		/opt/local/bin/gsed -i -r -e "/^Host server1/,+2 s/Hostname 192.168.8.21/Hostname lb.dyndns-ip.com/" ~/.ssh/config
+		/opt/local/bin/gsed -i -r -e "/^Host mediaplayer1/,+1 s/\t#ProxyCommand/\tProxyCommand/" ~/.ssh/config
+	fi
+}
+
+# overly efforted method to configure/start/stop/restart tomcat on my mac that I came up with when
+# I first needed to get tomcat setup locally for ETS dev, really not needed
+function tomcatControl() {
+	local tomcatVer="7.0.54"
+	local tomcatDir="/Users/lbrieden/tomcat/apache-tomcat-$tomcatVer"
+	local currentDb=$(readlink $tomcatDir/conf/server.xml | cut -d'-' -f1)
+	local currentCon=$(readlink $tomcatDir/conf/context.xml)
+	local currentServ=$(readlink $tomcatDir/conf/server.xml)
+	if [ "$1" = "start" ]; then
+		if [ -z "$2" -o "$2" = "$currentDb" ]; then
+			if [[ -z $(ps aux | grep '[a]pache-tomcat') ]]; then
+				echo "Starting tomcat with $currentDb database"
+				$tomcatDir/bin/startup.sh
+			else
+				echo "Tomcat already running with $currentDb database"
+			fi
+		elif [ -e "$tomcatDir/conf/$2-context.xml" -a -e "$tomcatDir/conf/$2-server.xml" ]; then
+			if [ "$currentCon" != "$tomcatDir/conf/$2-context.xml" ]; then
+				echo "Changing context.xml link from $currentCon to $2-context.xml"
+				cd $tomcatDir/conf
+				ln -sf $2-context.xml context.xml
+				cd -
+			fi
+			if [ "$currentServ" != "$tomcatDir/conf/$2-server.xml" ]; then
+				echo "Changing server.xml link from $currentServ to $2-server.xml"
+				cd $tomcatDir/conf
+				ln -sf $2-server.xml server.xml
+				cd -
+			fi
+			echo "Starting tomcat with $2 database"
+			$tomcatDir/bin/startup.sh
+		else
+			echo "Error: There are no configuration files for database $2. Make sure it is a valid database and then try running 'tomcatControl create $2'."
+		fi
+	elif [ "$1" = "stop" ]; then
+		if [[ -z $(ps aux | grep -o '[a]pache-tomcat') ]]; then
+			echo "Tomcat is not running"
+		else
+			echo "Stopping Tomcat running with $currentDb database"
+			$tomcatDir/bin/shutdown.sh
+		fi
+	elif [ "$1" = "restart" ]; then
+		if [[ -z $(ps aux | grep '[a]pache-tomcat') ]]; then
+			echo "Tomcat is not running"
+		else
+			echo "Stopping Tomcat running with $currentDb database"
+			$tomcatDir/bin/shutdown.sh
+		fi
+		if [ -z "$2" -o "$2" = "$currentDb" ]; then
+			echo "Restarting tomcat with $currentDb database"
+			$tomcatDir/bin/startup.sh
+		elif [ -e "$tomcatDir/conf/$2-context.xml" -a -e "$tomcatDir/conf/$2-server.xml" ]; then
+			if [ "$currentCon" != "$tomcatDir/conf/$2-context.xml" ]; then
+				echo "Changing context.xml link from $currentCon to $2-context.xml"
+				cd $tomcatDir/conf
+				ln -sf $2-context.xml context.xml
+				cd -
+			fi
+			if [ "$currentServ" != "$tomcatDir/conf/$2-server.xml" ]; then
+				echo "Changing server.xml link from $currentServ to $2-server.xml"
+				cd $tomcatDir/conf
+				ln -sf $2-server.xml server.xml
+				cd -
+			fi
+			echo "Restarting tomcat with $2 database"
+			$tomcatDir/bin/startup.sh
+		else
+			echo "Error: There are no configuration files for database $2. Make sure it is a valid database and then try running 'tomcatControl create $2'."
+		fi
+	elif [ "$1" = "create" ]; then
+		if [ -z "$2" ]; then
+			echo "Error: 'tomcatControl create' requires the name of a database to create configuration files for."
+		elif [ -e "$tomcatDir/conf/$2-context.xml" -o -e "$tomcatDir/conf/$2-server.xml" ]; then
+			echo "Error: Configuration files for $2 database already exists. Try running 'tomcatControl start $2'."
+		else
+			echo "Creating configuration files for $2 database"
+			cp $tomcatDir/conf/context.xml $tomcatDir/conf/$2-context.xml
+			cp $tomcatDir/conf/server.xml $tomcatDir/conf/$2-server.xml
+			/opt/local/bin/gsed -i -r -e "s/$currentDb/$2/g" $tomcatDir/conf/$2-context.xml
+			/opt/local/bin/gsed -i -r -e "s/$currentDb/$2/g" $tomcatDir/conf/$2-server.xml
+		fi
+	else
+		echo "Error: Illegal option. 'tomcatControl action [database]'. Available options are 'start, stop, restart, create'."
+	fi
+}
+
+if [[ $HOSTNAME = 'Server1' ]]; then
+	function mediaPermissions() {
+		sudo chown -R media.media $1
+		sudo chmod -R ug=rwX,o-rwx $1
+	}
+fi

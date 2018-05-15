@@ -1,0 +1,81 @@
+# ls
+# gls is macports coreutils version of gnu ls (vs mac's bsd ls)
+if type gls >/dev/null 2>/dev/null; then
+	alias ls="gls -F --color --group-directories-first"
+else
+	alias ls="ls -F --color --group-directories-first"
+fi
+alias ll="ls -lh"
+alias la="ll -a"
+alias lsa="ls -a"
+alias lsd='ls -lha | grep --color=never "^d"'
+alias lm="ls -m"
+alias lt="ls -lht"
+alias ltr="ls -lhtr"
+alias lss="ls -lh --sort=size"
+alias lssr="ls -lhr --sort=size"
+
+# MacOS doesn't have dircolors program. Have to install coreutils and symlink to gdircolors
+# NOT SURE IF THIS WORKS ELSEWHERE
+eval `dircolors ~/.dir_colors`
+
+# directories
+alias cdd='cd -'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias d='dirs -p'
+alias cdn='pushd'
+alias cdp='popd'
+
+alias df="df -h"
+alias du="du -h"
+alias dus="du -sh"
+alias gip="curl -s http://checkip.dyndns.com/ | sed 's/[^0-9\.]//g'"
+
+# vim
+alias view='vim -R'
+alias vit="vim -p"
+alias vihs='vim -o'
+alias vivs='vim -O'
+alias lvim='vim -c "normal '\''0"'
+alias lmvim='mvim -c "normal '\''0"'
+# clean vim swp files (shouldn't be a problem with current centralized storage)
+alias clnswp='find . -name .*.sw[mnop] -type f -delete'
+
+# quick source/edit various configs
+alias sb='source ~/.bashrc'
+alias eb='vim ~/.bashrc'
+alias ev='vim ~/.vimrc'
+alias et='vim ~/.tmux.conf'
+
+alias grep='grep --color'
+alias gphpdoc="grep -E '^\s*/?\*+'"
+alias gs='ps aux | grep [s]sh'
+alias saa='ssh-add ~/.ssh/*[dr]sa'
+
+# VCS
+alias svndiff='svn diff --diff-cmd=svndiff_helper'
+
+# connect and forward through sh server, really not necessary with VPN but keeping incase
+# ever needed in an emergency
+#alias conscsh='ssh -fND 10132 lbrieden@scsh01.alchemysystems.com'
+#alias disscsh='pkill -KILL -f ssh.*-fND.*10132.*lbrieden@scsh01.alchemysystems.com'
+
+# MacOS
+alias showAllFilesY='defaults write com.apple.finder AppleShowAllFiles YES'
+alias showAllFilesN='defaults write com.apple.finder AppleShowAllFiles NO'
+alias flushdnscache="sudo dscacheutil -flushcache"
+# clean files mac shits out everywhere
+alias clnmac="find . -name '*.DS_Store' -type f -delete"
+# surely can do this better these days???
+alias cigrep="~/bin/cigrep.mod"
+# run local on mac when fs01ets shell pmonitor-webload left tab color
+alias resetTab='echo -ne "\033]6;1;bg;*;default\a"'
+
+# testing
+alias ccaccept="php codecept.phar run -c projects/ets acceptance"
+alias ccfunctional="php codecept.phar run -c projects/ets functional"
+alias cccleartmp="find ../../public/{download,upload,logs}/ -type f -delete ; find tests/_output/ -type f -delete"
+
