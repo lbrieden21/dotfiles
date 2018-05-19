@@ -9,6 +9,7 @@ alias ll="ls -lh"
 alias la="ll -a"
 alias lsa="ls -a"
 alias lsd='ls -lha | grep --color=never "^d"'
+alias lso='ls -A | grep "^\."'
 alias lm="ls -m"
 alias lt="ls -lht"
 alias ltr="ls -lhtr"
