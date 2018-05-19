@@ -18,7 +18,11 @@ alias lssr="ls -lhr --sort=size"
 
 # MacOS doesn't have dircolors program. Have to install coreutils and symlink to gdircolors
 # NOT SURE IF THIS WORKS ELSEWHERE
-eval `dircolors ~/.dir_colors`
+if [ -f /opt/local/bin/gdircolors ]; then
+	eval `/opt/local/bin/gdircolors ~/dotfiles/bash/dir_colors`
+elif type dircolors >/dev/null 2>/dev/null; then
+	eval `dircolors ~/dotfiles/bash/dir_colors`
+fi
 
 # directories
 alias cdd='cd -'
@@ -46,8 +50,8 @@ alias lmvim='mvim -c "normal '\''0"'
 alias clnswp='find . -name .*.sw[mnop] -type f -delete'
 
 # quick source/edit various configs
-alias sb='source ~/.bashrc'
-alias eb='vim ~/.bashrc'
+alias sb='source ~/.bash_profile'
+alias eb='vim ~/.bash_profile'
 alias ev='vim ~/.vimrc'
 alias et='vim ~/.tmux.conf'
 

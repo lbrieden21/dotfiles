@@ -1,6 +1,6 @@
 # Editor
 if type mvim >/dev/null 2>/dev/null; then
-	export VISUAL=mvim
+	export VISUAL="mvim -v"
 	export EDITOR="$VISUAL"
 	alias vi='mvim -v'
 	alias vim='mvim -v'

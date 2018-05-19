@@ -81,9 +81,6 @@
     # https://github.com/so-fancy/diff-so-fancy/issues/296
     # diffFilter = "diff-so-fancy"
 
-[difftool "Kaleidoscope"]
-	# cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
-
 [diff]
 	# Detect copies as well as renames
 	renames = copies
@@ -91,6 +88,11 @@
 	# shifts the hunk boundary in an attempt to make the resulting
 	# patch easier to read.
 	compactionHeuristic = true
+	tool = vimdiff
+
+[difftool "Kaleidoscope"]
+	# cmd = ksdiff-wrapper git \"$LOCAL\" \"$REMOTE\"
+	prompt = false
 
 [color]
     ui = auto
@@ -111,13 +113,14 @@
 	local = yellow
 	remote = green
 [color "status"]
-	added = yellow
-	changed = green
-	untracked = cyan
+	#added = yellow
+	#changed = green
+	#untracked = cyan
 
 [merge]
 	# Include summaries of merged commits in newly created merge commit messages
 	log = true
+	tool = vimdiff
 
 # correct typos
 [help]

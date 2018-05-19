@@ -1,0 +1,176 @@
+# @gf3’s Sexy Bash Prompt, inspired by “Extravagant Zsh Prompt”
+# Customized for the Solarized color scheme by Sean O'Neil
+
+if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+	export TERM=gnome-256color
+elif infocmp xterm-256color >/dev/null 2>&1; then
+	if [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
+		export TERM=xterm-256color
+	else
+		export TERM=xterm-256color
+	fi
+fi
+
+## Non-Solarized Theme
+#if tput setaf 1 &> /dev/null; then
+#	tput sgr0
+#	if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
+#	  MAGENTA=$(tput setaf 9)
+#	  ORANGE=$(tput setaf 172)
+#	  GREEN=$(tput setaf 190)
+#	  PURPLE=$(tput setaf 141)
+#	  WHITE=$(tput setaf 256)
+#	else
+#	  MAGENTA=$(tput setaf 5)
+#	  ORANGE=$(tput setaf 4)
+#	  GREEN=$(tput setaf 2)
+#	  PURPLE=$(tput setaf 1)
+#	  WHITE=$(tput setaf 7)
+#	fi
+#	BOLD=$(tput bold)
+#	RESET=$(tput sgr0)
+#else
+#	MAGENTA="\033[1;31m"
+#	ORANGE="\033[1;33m"
+#	GREEN="\033[1;32m"
+#	PURPLE="\033[1;35m"
+#	WHITE="\033[1;37m"
+#	BOLD=""
+#	RESET="\033[m"
+#fi
+
+# Solarized Theme
+if tput setaf 1 &> /dev/null; then
+	tput sgr0
+	if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
+	  BASE03=$(tput setaf 234)
+	  BASE02=$(tput setaf 235)
+	  BASE01=$(tput setaf 240)
+	  BASE00=$(tput setaf 241)
+	  BASE0=$(tput setaf 244)
+	  BASE1=$(tput setaf 245)
+	  BASE2=$(tput setaf 254)
+	  BASE3=$(tput setaf 230)
+	  YELLOW=$(tput setaf 136)
+	  ORANGE=$(tput setaf 166)
+	  RED=$(tput setaf 160)
+	  MAGENTA=$(tput setaf 125)
+	  VIOLET=$(tput setaf 61)
+	  BLUE=$(tput setaf 33)
+	  CYAN=$(tput setaf 37)
+	  GREEN=$(tput setaf 64)
+	else
+	  BASE03=$(tput setaf 8)
+	  BASE02=$(tput setaf 0)
+	  BASE01=$(tput setaf 10)
+	  BASE00=$(tput setaf 11)
+	  BASE0=$(tput setaf 12)
+	  BASE1=$(tput setaf 14)
+	  BASE2=$(tput setaf 7)
+	  BASE3=$(tput setaf 15)
+	  YELLOW=$(tput setaf 3)
+	  ORANGE=$(tput setaf 9)
+	  RED=$(tput setaf 1)
+	  MAGENTA=$(tput setaf 5)
+	  VIOLET=$(tput setaf 13)
+	  BLUE=$(tput setaf 4)
+	  CYAN=$(tput setaf 6)
+	  GREEN=$(tput setaf 2)
+	fi
+	BOLD=$(tput bold)
+	RESET=$(tput sgr0)
+else
+	# Linux console colors. I don't have the energy
+	# to figure out the Solarized values
+	MAGENTA="\033[1;31m"
+	ORANGE="\033[1;33m"
+	GREEN="\033[1;32m"
+	PURPLE="\033[1;35m"
+	WHITE="\033[1;37m"
+	BOLD=""
+	RESET="\033[m"
+fi
+
+GREPPRG="/usr/bin/grep"
+
+parse_git_dirty () {
+	[[ $(git status 2> /dev/null | tail -n1 | cut -c 1-17) != "nothing to commit" ]] && echo "*"
+}
+parse_git_branch () {
+	git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+}
+
+# Check the current directory and below for dirtiness - about 20ms slower
+parse_svn_dirty_wd() {
+	`svn status -q 2> /dev/null | $GREPPRG '^\s\{0,7\}[ADMR]' > /dev/null` && echo "*"
+}
+
+# Check the entire local working copy for dirtiness - about 20ms slower
+parse_svn_dirty_fd2() {
+	if [[ $(svnversion) != "Unversioned directory" ]]; then
+		WCRP=`svn info | $GREPPRG 'Working Copy Root Path' | awk 'BEGIN { FS=": " };{ print $2 }'`
+		`svn status -q $WCRP 2> /dev/null | $GREPPRG '^\s\{0,7\}[ADMR]' > /dev/null` && echo "*"
+	fi
+}
+
+# Check the entire local working copy for dirtiness
+parse_svn_dirty_fd() {
+	[[ -n $(svn stat -q $(svn info 2> /dev/null | $GREPPRG 'Work' | sed 's:Work.+\: \(.+\)$:\1:') 2> /dev/null | $GREPPRG '^[MA]') ]] && echo "*"
+}
+
+parse_svn_branch() {
+	svn info 2> /dev/null | $GREPPRG  '^URL' | sed "s:^URL.*branches/\([^/]*\)/.*$:$(parse_svn_dirty_fd)\1$(parse_svn_dirty_wd):"
+}
+
+parse_cms_branch() {
+	if [[ -n $(git branch 2> /dev/null) ]]; then
+		parse_git_branch
+	elif [[ -n $(svn info 2> /dev/null) ]]; then
+		parse_svn_branch
+	fi
+}
+
+#PS1="\[$BASE03\]BASE03\n";
+#PS1="$PS1\[${BOLD}${BASE03}\]BASE03\n";
+#PS1="$PS1\[$BASE02\]BASE02\n";
+#PS1="$PS1\[${BOLD}${BASE02}\]BASE02\n";
+#PS1="$PS1\[$BASE01\]BASE01\n";
+#PS1="$PS1\[${BOLD}${BASE01}\]BASE01\n";
+#PS1="$PS1\[$BASE00\]BASE00\n";
+#PS1="$PS1\[${BOLD}${BASE00}\]BASE00\n";
+#PS1="$PS1\[$BASE0\]BASE0\n";
+#PS1="$PS1\[${BOLD}${BASE0}\]BASE0\n";
+#PS1="$PS1\[$BASE1\]BASE1\n";
+#PS1="$PS1\[${BOLD}${BASE1}\]BASE1\n";
+#PS1="$PS1\[$BASE2\]BASE2\n";
+#PS1="$PS1\[${BOLD}${BASE2}\]BASE2\n";
+#PS1="$PS1\[$BASE3\]BASE3\n";
+#PS1="$PS1\[${BOLD}${BASE3}\]BASE3\n";
+#PS1="$PS1\[$YELLOW\]YELLOW\n";
+#PS1="$PS1\[${BOLD}${YELLOW}\]YELLOW\n";
+#PS1="$PS1\[$ORANGE\]ORANGE\n";
+#PS1="$PS1\[${BOLD}${ORANGE}\]ORANGE\n";
+#PS1="$PS1\[$RED\]RED\n";
+#PS1="$PS1\[${BOLD}${RED}\]RED\n";
+#PS1="$PS1\[$MAGENTA\]MAGENTA\n";
+#PS1="$PS1\[${BOLD}${MAGENTA}\]MAGENTA\n";
+#PS1="$PS1\[$VIOLET\]VIOLET\n";
+#PS1="$PS1\[${BOLD}${VIOLET}\]VIOLET\n";
+#PS1="$PS1\[$BLUE\]BLUE\n";
+#PS1="$PS1\[${BOLD}${BLUE}\]BLUE\n";
+#PS1="$PS1\[$CYAN\]CYAN\n";
+#PS1="$PS1\[${BOLD}${CYAN}\]CYAN\n";
+#PS1="$PS1\[$GREEN\]GREEN\n";
+#PS1="$PS1\[${BOLD}${GREEN}\]GREEN\n";
+#PS1="$PS1\[$RESET\]RESET\n";
+#PS1="$PS1\[${BOLD}${RESET}\]RESET\$";
+
+PS1="\[${BOLD}${VIOLET}\]\u"
+PS1="$PS1\[$BASE1\]@"
+PS1="$PS1\[$VIOLET\]\h"
+PS1="$PS1\[$BASE2\]:"
+PS1="$PS1\[$GREEN\]\w"
+PS1="$PS1\[$BASE1\]\$([[ -n \$(git branch 2> /dev/null) || \$(svn info 2> /dev/null ) ]] && echo \" on \")"
+PS1="$PS1\[$YELLOW\]\$(parse_cms_branch)"
+PS1="$PS1\[$BASE1\]\n\$ "
+PS1="$PS1\[$RESET\]"
