@@ -3,7 +3,7 @@
 set nocompatible		" be iMproved
 " For some reason fs01sb started throwing fatal SSL errors for https github
 " when I switched to the new dotfiles procedure, so this hack lets it work
-if hostname() == 'fs01sb.dfw.alchemysystems.com'
+if hostname() =~ 'alchemy'
   let g:plug_url_format = 'git@github.com:%s.git'
 endif
 
@@ -110,7 +110,7 @@ Plug 'rizzatti/greper.vim'
 " https://github.com/rizzatti/funcoo.vim
 Plug 'rizzatti/funcoo.vim'
 
-if has('python')
+if has('python') && version >= 704
   " UltiSnips - The ultimate snippet solution for Vim.
   " https://github.com/SirVer/ultisnips
   Plug 'SirVer/ultisnips'
@@ -129,9 +129,11 @@ Plug 'honza/vim-snippets'
 " https://github.com/justinj/vim-react-snippets
 Plug 'justinj/vim-react-snippets'
 
-" Shows git diff in the gutter
-" https://github.com/airblade/vim-gitgutter
-Plug 'airblade/vim-gitgutter'
+if version > 703
+  " Shows git diff in the gutter
+  " https://github.com/airblade/vim-gitgutter
+  Plug 'airblade/vim-gitgutter'
+endif
 
 " Adds git commands
 Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
