@@ -1,6 +1,11 @@
 " NOTE: SETTINGS IN THIS FILE ARE HEAVILY RIPPED OFF FROM THE DP
 " lots used from https://github.com/rdlugosz/dotfiles/blob/master/vimrc
 set nocompatible		" be iMproved
+" For some reason fs01sb started throwing fatal SSL errors for https github
+" when I switched to the new dotfiles procedure, so this hack lets it work
+if hostname() == 'fs01sb.dfw.alchemysystems.com'
+  let g:plug_url_format = 'git@github.com:%s.git'
+endif
 
 " Plugins
 call plug#begin('~/.vim/plugged')
@@ -74,18 +79,19 @@ Plug 'nathanaelkane/vim-indent-guides'
 " http://www.vim.org/scripts/script.php?script_id=3037
 Plug 'michaeljsmith/vim-indent-object'
 
-" Syntax checker for many languages
-" https://github.com/scrooloose/syntastic
-"Plug 'scrooloose/syntastic'
-" Plug 'vim-syntastic/syntastic'
-" https://github.com/pmsorhaindo/syntastic-local-eslint.vim
-" Plug 'pmsorhaindo/syntastic-local-eslint.vim'
-
-" Asynchronous Lint Engine
-" https://github.com/w0rp/ale
-" ALE (Asynchronous Lint Engine) is a plugin for providing linting in NeoVim
-" and Vim 8 while you edit your text files.
-Plug 'w0rp/ale'
+if version >= 800
+  " Asynchronous Lint Engine
+  " https://github.com/w0rp/ale
+  " ALE (Asynchronous Lint Engine) is a plugin for providing linting in NeoVim
+  " and Vim 8 while you edit your text files.
+  Plug 'w0rp/ale'
+else
+  " Syntax checker for many languages
+  " https://github.com/scrooloose/syntastic
+  Plug 'vim-syntastic/syntastic'
+  " https://github.com/pmsorhaindo/syntastic-local-eslint.vim
+  Plug 'pmsorhaindo/syntastic-local-eslint.vim'
+endif
 
 " Project level configurations for tabs and new lines
 " Plug 'editorconfig/editorconfig-vim', { 'for': ['javascript', 'javascript.jsx'] }
@@ -610,6 +616,19 @@ let g:ale_pattern_options = {
 \       'ale_linters': {'php': ['php', 'phpcs', 'phpmd']},
 \   },
 \}
+
+" Syntastic config
+let g:syntastic_enable_signs = 1 " check if this slows things down
+"let g:syntastic_check_on_open = 1
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+let g:syntastic_auto_jump = 0
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_javascript_checkers = ['eslint']
+"let g:syntastic_php_phpcs_args="--standard=PSR2"
+let g:syntastic_mode_map = { 'mode': 'active',
+  \ 'active_filetypes': ['javascript'],
+  \ 'passive_filetypes': ['html','php'] }
 
 " editorconfig config
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
