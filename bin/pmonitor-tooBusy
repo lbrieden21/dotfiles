@@ -1,0 +1,70 @@
+#!/bin/bash
+# This script scans the servername*loadavg.log files for any occurences of too_busy.
+# If no options are passed in on the command line by default we check for 'too_busy=web',
+# 'too_busy=db' or 'too_busy=web+db' with today's date. 
+
+PRODLOGS=/web/www.texes-ets.org/public/logs
+
+# It is necessary to do the date this way because single digit dates in the log files are
+# not zero or space padded.
+if [ `date '+%d'` -lt "10" ]
+then
+	DT=`date '+%a %b%_d'`
+else
+	DT=`date '+%a %b %d'`
+fi
+
+#SVS='1234'	# lms or cms webserver numbers to check the log files for
+SVS=$ACTIVELMSSERVERS	# lms or cms webserver numbers to check the log files for
+MS='web'	# default to check the etsweb webserver log files
+MATCH='too_busy=web+db|too_busy=web|too_busy=db' # What we will actually grep the log file for
+SORTOPTS=''
+
+# Here we handle command line options passed to the script. The order that the options appear
+# on the command line in general is not important unless 2 or more options conflict with each
+# other in which case the last option overrides the earlier option[s].
+until [ -z "$1" ]
+do
+	if [ "$1" = "cms" ]
+	then
+		MS='fpm'				# Check cms log files (ie fpm webservers)
+	elif [ "$1" = "fpm" ]
+	then
+		MS='fpm'				# Same as cms
+	elif [ "$1" = "sh" ]
+	then
+		SORTOPTS='-k5'			# sort output by hour
+	elif [ "$1" = "sd" ]
+	then
+		SORTOPTS='-k4 -k5 -n'	# sort output by day
+	elif [ "$1" = "sm" ]
+	then
+		SORTOPTS='-k3 -M'		# sort output by month
+	elif [ "$1" = "ss" ]
+	then
+		SORTOPTS='-k9'			# sort output by server load, probably not very useful
+	elif [ "$1" = "st" ]
+	then
+		SORTOPTS='-k11'			# sort output by db_threads, probably not very useful
+	elif [[ "$1" =~ Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec ]]
+	then
+		DT=$1
+	elif [[ "$1" =~ ^[1-9]+$ ]]
+	then
+		SVS=$1
+	elif [[ "$1" =~ ^sv.+$ ]]
+	then
+		MATCH="serv_load=`expr $1 : 'sv\(.*\)'`"
+	elif [[ "$1" =~ ^db.+$ ]]
+	then
+		MATCH="db_threads=`expr $1 : 'db\(.*\)'`"
+	fi
+	shift
+done
+
+if [ "$SORTOPTS" = '' ]
+then
+	grep "$DT" $PRODLOGS/"$MS"0[$SVS]ets56.ord*loadavg.log* | grep --color -E $MATCH
+else
+	grep "$DT" $PRODLOGS/"$MS"0[$SVS]ets56.ord*loadavg.log* | grep --color -E $MATCH | sort $SORTOPTS
+fi

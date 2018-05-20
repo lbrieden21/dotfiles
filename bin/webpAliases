@@ -1,0 +1,3 @@
+alias webps='curl -s http://localhost/server/status/x | html2text | grep "^[0-9]*-[0-9]*" | grep -v -E "( \. | \_ )"'
+alias webpss="webps | awk '{ if (\$6 <= 3600) print \$0 ; }'"
+alias webpslong="webps | awk '{ if (\$6 >= 3600) print \$0 ; }'"

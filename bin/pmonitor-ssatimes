@@ -1,0 +1,67 @@
+#!/bin/bash
+# Final message could be something like "tid $tid: $st - $et: $diff $erm"
+# Other Ideas: Add color for diff time over certain value. Add color for ERM. Cut out extra ERM text.
+ACTIVELMSSERVERS=12345
+PRODLOGS=/web/www.texes-ets.org/public/logs
+SVS=$ACTIVELMSSERVERS
+TIMEREGEX='[0-2][0-9]:[0-5][0-9]:[0-5][0-9]'
+
+# It is necessary to do the hour this way because hours less than 10 are 0 padded
+CURRHOUR=$(TZ=America/Chicago date '+%H' )
+if [ "$CURRHOUR" \< "10" ]
+then
+	# The 10# forces bash to interpert $CURRHOUR in base 10. Without it bash would think 00-09 were
+	# octal numbers and would throw an error for 08 and 09 since they aren't valid octal base numbers
+	PREVHOUR="0"$(( 10#$CURRHOUR - 1 ))
+elif [ "$CURRHOUR" == "10" ]
+then
+	PREVHOUR="09"
+else
+	PREVHOUR=$(( $CURRHOUR - 1 ))
+fi
+
+# It is necessary to do the date this way because single digit dates in the log files are
+# not zero or space padded anymore.
+if [ `TZ=America/Chicago date '+%d'` -lt "10" ]
+then
+	#DT=`date '+%a,%_d %b %Y'`
+	DT=`TZ=America/Chicago date '+%a, %d %b %Y'`
+else
+	DT=`TZ=America/Chicago date '+%a, %d %b %Y'`
+fi
+
+#DT="8 Apr 2015"
+transactionIds=$( grep -h "$DT \($PREVHOUR\|$CURRHOUR\):" $PRODLOGS/web0[$SVS]ets56.ord*xml_sent.log* | grep -o '<transactionID>[0-9]\+' | grep -o '[0-9]\+' | sort )
+#transactionIds=$( grep -h "$DT \($CURRHOUR\):" $PRODLOGS/web0[$SVS]ets56.ord*xml_sent.log* | grep -o '<transactionID>[0-9]\+' | grep -o '[0-9]\+' | sort )
+#transactionIds=$( grep -h "$DT 18:" $PRODLOGS/web0[$SVS]ets56.ord*xml_sent.log* | grep -o '<transactionID>[0-9]\+' | grep -o '[0-9]\+' | sort )
+#transactionIds=$( grep -h "$DT 1[56]:" $PRODLOGS/web0[$SVS]ets56.ord*xml_sent.log* | grep -o '<transactionID>[0-9]\+' | grep -o '[0-9]\+' | sort )
+
+#echo "\"TID\",\"SENT\",\"RECVD\",\"DIFF\",\"SITE\",\"ERM\""
+#echo "\"TID\",\"SENT\",\"RECVD\",\"DIFF\",\"SITE\",\"ACTION\",\"EXAMID\",\"STUDENTID\",\"TEAID\",\"ERM\""
+for id in $transactionIds
+do
+	starttime=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_sent.log* | grep -o "$DT $TIMEREGEX" )
+	endtime=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o "$DT $TIMEREGEX" )
+	erm=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o 'ERM[0-9]\{4\}.\+</text>' )
+	site=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o '<string>\(APCN\|STN\)[^<]\+' | grep -o '\(APCN\|STN\)[^<]\+' )
+	#action=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o '<action>[^<]\+' | grep -o 'SSA[^<]\+' )
+	#examid=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o '<clientAppointmentID xmlns="">[0-9]\+<' | grep -o '[0-9]\+' )
+	#studentid=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o '<clientCandidateID>[0-9]\+<' | grep -o '[0-9]\+' )
+	#teaid=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o '<etsCandidateID>[0-9]\+<' | grep -o '[0-9]\+' )
+	#testcode=$( grep -h "$id" $PRODLOGS/web0[$SVS]ets56.ord*xml_received.log* | grep -o '<string>[0-1][0-9]\{3\}' | grep -o '[0-1][0-9]\{3\}' )
+	stsecs=$( date -d "$starttime" '+%s' )
+	if [ -z "$endtime" ]
+	then
+		endtime="$DT  TIMEOUT"
+		difftime="NA"
+	else
+		etsecs=$( date -d "$endtime" '+%s' )
+		difftime=$(( $etsecs - $stsecs ))
+	fi
+	#echo -e "TID $id:\t$starttime - $endtime: diff ${difftime}s $erm"
+	echo -e "TID $id:\t$starttime - $endtime: diff ${difftime}s $site $erm"
+	#echo -e "TID $id:\t$starttime - $endtime: diff ${difftime}s $testcode $site $erm"
+	#echo -e "TID $id:\t$starttime - $endtime: diff ${difftime}s $site $action $examid $studentid $teaid $erm"
+	#echo "\"${id}\",\"${starttime}\",\"${endtime}\",\"${difftime}s\",\"${erm}\""
+	#echo "\"${id}\",\"${starttime}\",\"${endtime}\",\"${difftime}s\",\"${site}\",\"${action}\",\"${examid}\",\"${studentid}\",\"${teaid}\",\"${erm}\""
+done

@@ -1,0 +1,72 @@
+#!/bin/bash
+
+PRODLOGS=/web/www.texes-ets.org/public/logs
+
+
+if [ `date '+%d'` -lt "10" ]
+then
+	DT=`date '+%a %b%_d'`
+else
+	DT=`date '+%a %b %d'`
+fi
+
+#SVS='1234'
+#SVS='234'
+SVS=$ACTIVELMSSERVERS
+CAP="serv_load=[0-9]\+"
+SPLT="no"
+MS="web"
+AVG="no"
+
+until [ -z "$1" ]
+do
+	if [ "$1" = "db" ]
+	then
+		CAP="db_threads=[0-9]\+"
+	elif [ "$1" = "split" ]
+	then
+		SPLT="split"
+	elif [ "$1" = "avg" ]
+	then
+		AVG="avg"
+	elif [ "$1" = "cms" ]
+	then
+		MS='fpm'
+	elif [ "$1" = "fpm" ]
+	then
+		MS='fpm'
+	elif [[ "$1" =~ Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec ]]
+	then
+		DT=$1
+	elif [[ "$1" =~ Mon|Tue|Wed|Thu|Fri|Sat|Sun ]]
+	then
+		DT=$1
+	elif [[ "$1" =~ ^[1-9]+$ ]]
+	then
+		SVS=$1
+	fi
+	shift
+done
+
+if [ "$SPLT" = "split" ]
+then
+	for LG in $( ls $PRODLOGS/"$MS"0[$SVS]ets56.ord*alchemysystems.com_loadavg.log )
+	do
+		echo $LG
+		result=`grep -i -h "$DT" $LG* | grep -o $CAP | grep -o "[0-9]\+" | sort -b -g | uniq -c`
+		echo "$result"
+		if [ "$AVG" = "avg" ]
+		then
+			average=`echo "$result" | awk '{ total += $1 * $2; count += $1 } END { printf "%.4f\n", total/count }'`
+			echo "Average: $average"
+		fi
+	done
+else
+	result=`grep -i -h "$DT" $PRODLOGS/"$MS"0[$SVS]ets56.ord*alchemysystems.com_loadavg.log* | grep -o $CAP | grep -o "[0-9]\+" | sort -b -g | uniq -c`
+	echo "$result"
+	if [ "$AVG" = "avg" ]
+	then
+		average=`echo "$result" | awk '{ total += $1 * $2; count += $1 } END { printf "%.4f\n", total/count }'`
+		echo "Average: $average"
+	fi
+fi
