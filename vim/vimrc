@@ -176,6 +176,9 @@ Plug 'AndrewRadev/splitjoin.vim'
 " Save sessions
 Plug 'xolox/vim-misc' | Plug 'xolox/vim-session'
 
+" Ask what file you wanted to open when its not a real file
+Plug 'EinfachToll/DidYouMean'
+
 " Language syntax support
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-git'
