@@ -1,0 +1,33 @@
+#!/bin/sh
+
+find . -maxdepth 6 \
+	-name CVS -prune \
+	-o -name '*mages' -prune \
+	-o -name imagecache -prune \
+	-o -name ckeditor -prune \
+	-o -name ckfinder -prune \
+	-o -name phpbb -prune \
+	-o -name phpbb3 -prune \
+	-o -name templates_c -prune \
+	-o -name media_libraries -prune \
+	-o -name fonts -prune \
+	-o -name logs -prune \
+	-o -name bpc -prune \
+	-o -name nusoap -prune \
+	-o -name wysiwyg -prune \
+	-o -name upload -prune \
+	-o -name .svn -prune \
+	-o -name _log -prune \
+	-o -name node_modules -prune \
+	-o -name vendor -prune \
+	-o \
+	! -iname '*.jpg' \
+	! -iname '*.gif' \
+	! -name tags \
+	! -name changelog.txt \
+	! -name ets.react.js \
+	! -name '*.map' \
+	! -name '*.pdf' \
+	! -name '*.sql' \
+	-print |
+xargs grep --color -Is "$@"

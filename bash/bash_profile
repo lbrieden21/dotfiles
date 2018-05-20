@@ -1,5 +1,5 @@
-# Add `~/bin` to the `$PATH`
-PATH="$HOME/bin:$PATH"
+# Add `~/bin` and '~/sbin' to the `$PATH`
+PATH="$HOME/bin:$HOME/sbin:$PATH"
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
