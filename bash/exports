@@ -35,3 +35,36 @@ if [[ $HOSTNAME = 'Server1' || $HOSTNAME = 'MediaPlayer1' ]]; then
 	export TERM='xterm'
 	export COLORTERM='gnome-256color'
 fi
+
+# FIXME ETS system specific exports, should be removed once ETS no more (or made generic enough
+# to work on non-ETS systems)
+if [[ "$HOSTNAME" =~ ets ]]; then
+	export PRODCODE=/web/www.texes-ets.org/public
+	export PRODLOGS=/web/www.texes-ets.org/public/logs
+	export PRODSCORES=/chroot/ets_scores_live/data
+	export PRODFEEDS=/chroot/ets_ect_live/data
+	export PRODEXPORTS=/chroot/ets_export_live/data
+	export PRODTEXGOV=/chroot/tea_live/data
+	export STAGECODE=/web/stage.texes-ets.org/public
+	export STAGELOGS=/web/stage.texes-ets.org/public/logs
+	export STAGESCORES=/chroot/ets_scores_test/data
+	export STAGEFEEDS=/chroot/ets_ect_test/data
+	export STAGEEXPORTS=/chroot/ets_export_test/data
+	export STAGETEXGOV=/chroot/tea_test/data
+	export TRAININGCODE=/web/training.texes-ets.org/public
+	export TRAININGLOGS=/web/training.texes-ets.org/public/logs
+	export TRAININGSCORES=/web/training.texes-ets.org/public/upload
+	export TRAININGFEEDS=/web/training.texes-ets.org/public/upload
+	export TRAININGEXPORTS=/web/training.texes-ets.org/public/tmp
+	export AVAILABLELMSSERVERS='12345'
+	export ACTIVELMSSERVERS='12345'
+	export AVAILABLECMSSERVERS='123'
+	export ACTIVECMSSERVERS='12'
+	export TIMEREGEX='[0-2][0-9]:[0-5][0-9]:[0-5][0-9]'
+	export MONTHREGEX='\(Jan\|Feb\|Mar\|Apr\|May\|Jun\|Jul\|Aug\|Sep\|Oct\|Nov\|Dec\)'
+	export WKDAYREGEX='\(Mon\|Tue\|Wed\|Thu\|Fri\|Sat\|Sun\)'
+	export DAYREGEX='[0-3]\?[0-9]'
+	export TXEAIBTADMNLINEREGEX='TX1[0-9]\{3\}[0-1][0-9]\/[0-3][0-9]\/201[0-6][0-1][0-9]\/[0-3][0-9]\/201[0-6][0-1][0-9]\/[0-3][0-9]\/201[0-6]'
+	export WEBS='web0[12345]ets56'
+	export CRONWEBS={cron,web}0[1234]ets56
+fi
