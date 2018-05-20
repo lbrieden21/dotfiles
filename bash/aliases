@@ -51,7 +51,7 @@ alias clnswp='find . -name .*.sw[mnop] -type f -delete'
 
 # quick source/edit various configs
 alias sb='source ~/.bash_profile'
-alias eb='vim ~/.bash_profile'
+alias eb='vim ~/dotfiles/bash/{bash_profile,aliases,exports,functions,path,bash_prompt}'
 alias ev='vim ~/.vimrc'
 alias et='vim ~/.tmux.conf'
 
