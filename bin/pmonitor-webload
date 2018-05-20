@@ -1,14 +1,27 @@
 #!/bin/bash
 
 #/farms/
-#These are defined in .bashrc
-#Hardoded here for now so others can use script
-#AVAILABLELMSSERVERS='12345'
+# If not already defined set sane defaults
+if [ -z "$AVAILABLELMSSERVERS" ]
+then
+	AVAILABLELMSSERVERS='12345'
+fi
+if [ -z "$ACTIVELMSSERVERS" ]
+then
 ACTIVELMSSERVERS='12345'
-#ACTIVELMSSERVERS='234'
-#AVAILABLECMSSERVERS='123'
-#ACTIVECMSSERVERS='12'
-LOGDIRECTORY=/web/www.texes-ets.org/public/logs
+fi
+if [ -z "$AVAILABLECMSSERVERS" ]
+then
+	AVAILABLECMSSERVERS='123'
+fi
+if [ -z "$ACTIVECMSSERVERS" ]
+then
+	ACTIVECMSSERVERS='12'
+fi
+if [ -z "$APPLOGDIR" ]
+then
+	APPLOGDIR=/web/www.texes-ets.org/public/logs
+fi
 WHICHFILES=$ACTIVELMSSERVERS
 MS='web'
 LOGFILES=$MS"0[$WHICHFILES]ets56.ord*loadavg.log"
@@ -20,19 +33,19 @@ while true
 do
 	clear
 	LOGFILES=$MS"0[$WHICHFILES]ets56.ord*loadavg.log"
-	NUMFILES=$(ls -l $LOGDIRECTORY/$LOGFILES | wc -l)
+	NUMFILES=$(ls -l $APPLOGDIR/$LOGFILES | wc -l)
 	if [ $NUMFILES -eq "1" ]
 	then
 		TAILLINES=$(($(tput lines) - 2))
-		echo "==> $LOGDIRECTORY/$LOGFILES <=="
+		echo "==> $APPLOGDIR/$LOGFILES <=="
 	else
 		TAILLINES=$((($(tput lines) - ($NUMFILES * 2)) / $NUMFILES))
 	fi
-	tail -n$TAILLINES $LOGDIRECTORY/$LOGFILES | GREP_COLORS="mt=48;5;160" grep --color -E $MATCH
+	tail -n$TAILLINES $APPLOGDIR/$LOGFILES | GREP_COLORS="mt=48;5;160" grep --color -E $MATCH
 	if $ALERTTITLE
 	then
 		#Set tab color to red or green based on too_busy status
-		if [[ -n $(tail -n1 $LOGDIRECTORY/$ALERTLOGFILES | grep -E 'too_busy=(web+db|web|db)') ]]
+		if [[ -n $(tail -n1 $APPLOGDIR/$ALERTLOGFILES | grep -E 'too_busy=(web+db|web|db)') ]]
 		then
 			echo -ne "\033]1;TOO BUSY\007"
 			echo -ne "\033]6;1;bg;red;brightness;128\a"
@@ -60,12 +73,11 @@ do
 			fi
 		;;
 		# Any combination of 1 through 6's log files
-		[1-6]|\
-		[1-6][1-6]|\
-		[1-6][1-6][1-6]|\
-		[1-6][1-6][1-6][1-6]|\
-		[1-6][1-6][1-6][1-6][1-6]|\
-		[1-6][1-6][1-6][1-6][1-6][1-6])
+		[1-5]|\
+		[1-5][1-5]|\
+		[1-5][1-5][1-5]|\
+		[1-5][1-5][1-5][1-5]|\
+		[1-5][1-5][1-5][1-5][1-5])
 			WHICHFILES=$WF
 		;;
 		t) #Turn alert title on or off

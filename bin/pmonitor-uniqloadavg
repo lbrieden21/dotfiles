@@ -1,8 +1,17 @@
 #!/bin/bash
 
-PRODLOGS=/web/www.texes-ets.org/public/logs
+if [ -z "$ACTIVELMSSERVERS" ]
+then
+	ACTIVELMSSERVERS='12345'
+fi
+if [ -z "$APPLOGDIR" ]
+then
+	APPLOGDIR=/web/www.texes-ets.org/public/logs
+fi
 
 
+# It is necessary to do the date this way because single digit dates in the log files are
+# not zero or space padded.
 if [ `date '+%d'` -lt "10" ]
 then
 	DT=`date '+%a %b%_d'`
@@ -10,8 +19,6 @@ else
 	DT=`date '+%a %b %d'`
 fi
 
-#SVS='1234'
-#SVS='234'
 SVS=$ACTIVELMSSERVERS
 CAP="serv_load=[0-9]\+"
 SPLT="no"
@@ -50,7 +57,7 @@ done
 
 if [ "$SPLT" = "split" ]
 then
-	for LG in $( ls $PRODLOGS/"$MS"0[$SVS]ets56.ord*alchemysystems.com_loadavg.log )
+	for LG in $( ls $APPLOGDIR/"$MS"0[$SVS]ets56.ord*alchemysystems.com_loadavg.log )
 	do
 		echo $LG
 		result=`grep -i -h "$DT" $LG* | grep -o $CAP | grep -o "[0-9]\+" | sort -b -g | uniq -c`
@@ -62,7 +69,7 @@ then
 		fi
 	done
 else
-	result=`grep -i -h "$DT" $PRODLOGS/"$MS"0[$SVS]ets56.ord*alchemysystems.com_loadavg.log* | grep -o $CAP | grep -o "[0-9]\+" | sort -b -g | uniq -c`
+	result=`grep -i -h "$DT" $APPLOGDIR/"$MS"0[$SVS]ets56.ord*alchemysystems.com_loadavg.log* | grep -o $CAP | grep -o "[0-9]\+" | sort -b -g | uniq -c`
 	echo "$result"
 	if [ "$AVG" = "avg" ]
 	then

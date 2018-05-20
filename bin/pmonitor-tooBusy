@@ -1,9 +1,16 @@
 #!/bin/bash
 # This script scans the servername*loadavg.log files for any occurences of too_busy.
 # If no options are passed in on the command line by default we check for 'too_busy=web',
-# 'too_busy=db' or 'too_busy=web+db' with today's date. 
+# 'too_busy=db' or 'too_busy=web+db' with today's date.
 
-PRODLOGS=/web/www.texes-ets.org/public/logs
+if [ -z "$ACTIVELMSSERVERS" ]
+then
+	ACTIVELMSSERVERS='12345'
+fi
+if [ -z "$APPLOGDIR" ]
+then
+	APPLOGDIR=/web/www.texes-ets.org/public/logs
+fi
 
 # It is necessary to do the date this way because single digit dates in the log files are
 # not zero or space padded.
@@ -14,7 +21,6 @@ else
 	DT=`date '+%a %b %d'`
 fi
 
-#SVS='1234'	# lms or cms webserver numbers to check the log files for
 SVS=$ACTIVELMSSERVERS	# lms or cms webserver numbers to check the log files for
 MS='web'	# default to check the etsweb webserver log files
 MATCH='too_busy=web+db|too_busy=web|too_busy=db' # What we will actually grep the log file for
@@ -64,7 +70,7 @@ done
 
 if [ "$SORTOPTS" = '' ]
 then
-	grep "$DT" $PRODLOGS/"$MS"0[$SVS]ets56.ord*loadavg.log* | grep --color -E $MATCH
+	grep "$DT" $APPLOGDIR/"$MS"0[$SVS]ets56.ord*loadavg.log* | grep --color -E $MATCH
 else
-	grep "$DT" $PRODLOGS/"$MS"0[$SVS]ets56.ord*loadavg.log* | grep --color -E $MATCH | sort $SORTOPTS
+	grep "$DT" $APPLOGDIR/"$MS"0[$SVS]ets56.ord*loadavg.log* | grep --color -E $MATCH | sort $SORTOPTS
 fi

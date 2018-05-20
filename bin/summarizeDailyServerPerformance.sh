@@ -2,10 +2,8 @@
 # Use 'pmonitor-tools' to log summaries of the previous days web and db server performance
 # Script to be run from cron job
 
-if [ "$ACTIVELMSSERVERS" != "" ]
+if [ -z "$ACTIVELMSSERVERS" ]
 then
-	export ACTIVELMSSERVERS
-else
 	export ACTIVELMSSERVERS='12345'
 fi
 
@@ -29,10 +27,10 @@ do
 done
 
 # Directory to store the files in
-LOGDIR=/home/lbrieden/server_performance_logs
+PERFLOGDIR=/home/lbrieden/server_performance_logs
 
 # Filename for log file
-LOGFILE=$LOGDIR/`date --date="$YST" '+%Y%m%d'`_server_performance
+LOGFILE=$PERFLOGDIR/`date --date="$YST" '+%Y%m%d'`_server_performance
 
 echo "Server load for $YST" > $LOGFILE
 ~/bin/pmonitor-uniqloadavg "$YST" avg >> $LOGFILE
