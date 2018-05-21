@@ -165,9 +165,18 @@ parse_cms_branch() {
 #PS1="$PS1\[$RESET\]RESET\n";
 #PS1="$PS1\[${BOLD}${RESET}\]RESET\$";
 
+# hostname color depending, red for ORD servers, yellow for DFW servers, violet other
+if [[ "$HOSTNAME" =~ ord ]]; then
+	HOSTCOLOR=$RED
+elif [[ "$HOSTNAME" =~ dfw ]]; then
+	HOSTCOLOR=$YELLOW
+else
+	HOSTCOLOR=$VIOLET
+fi
+
 PS1="\[${BOLD}${VIOLET}\]\u"
 PS1="$PS1\[$BASE1\]@"
-PS1="$PS1\[$VIOLET\]\h"
+PS1="$PS1\[$HOSTCOLOR\]\h"
 PS1="$PS1\[$BASE2\]:"
 PS1="$PS1\[$GREEN\]\w"
 PS1="$PS1\[$BASE1\]\$([[ -n \$(git branch 2> /dev/null) || \$(svn info 2> /dev/null ) ]] && echo \" on \")"
