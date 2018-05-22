@@ -11,7 +11,9 @@ unset file
 
 # bash completion (***NOTE may make sense to make this load all bash completion files it finds)
 if type port >/dev/null 2>/dev/null && [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
-	. /opt/local/etc/profile.d/bash_completion.sh
+	source /opt/local/etc/profile.d/bash_completion.sh
+elif type brew >/dev/null 2>/dev/null && [ -f "$(brew --prefix)/share/bash-completion/bash_completion" ]; then
+	source "$(brew --prefix)/share/bash-completion/bash_completion";
 elif [ -f /etc/bash_completion ]; then
 	 source /etc/bash_completion
 elif [ -f /etc/profile.d/bash-completion ]; then
