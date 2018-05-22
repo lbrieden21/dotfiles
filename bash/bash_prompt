@@ -93,42 +93,54 @@ fi
 
 GREPPRG="/usr/bin/grep"
 
-parse_git_dirty () {
-	[[ $(git status 2> /dev/null | tail -n1 | cut -c 1-17) != "nothing to commit" ]] && echo "*"
-}
-parse_git_branch () {
-	git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+# Former way of detecting dirtiness across different CMS, but since mainly only on git changing to below
+# parse_git_dirty () {
+# 	[[ $(git status 2> /dev/null | tail -n1 | cut -c 1-17) != "nothing to commit" ]] && echo "*"
+# }
+# parse_git_branch () {
+# 	git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+# }
+# # Check the current directory and below for dirtiness - about 20ms slower
+# parse_svn_dirty_wd() {
+# 	`svn status -q 2> /dev/null | $GREPPRG '^\s\{0,7\}[ADMR]' > /dev/null` && echo "*"
+# }
+# # Check the entire local working copy for dirtiness - about 20ms slower
+# parse_svn_dirty_fd2() {
+# 	if [[ $(svnversion) != "Unversioned directory" ]]; then
+# 		WCRP=`svn info | $GREPPRG 'Working Copy Root Path' | awk 'BEGIN { FS=": " };{ print $2 }'`
+# 		`svn status -q $WCRP 2> /dev/null | $GREPPRG '^\s\{0,7\}[ADMR]' > /dev/null` && echo "*"
+# 	fi
+# }
+# # Check the entire local working copy for dirtiness
+# parse_svn_dirty_fd() {
+# 	[[ -n $(svn stat -q $(svn info 2> /dev/null | $GREPPRG 'Work' | sed 's:Work.+\: \(.+\)$:\1:') 2> /dev/null | $GREPPRG '^[MA]') ]] && echo "*"
+# }
+# parse_svn_branch() {
+# 	svn info 2> /dev/null | $GREPPRG  '^URL' | sed "s:^URL.*branches/\([^/]*\)/.*$:$(parse_svn_dirty_fd)\1$(parse_svn_dirty_wd):"
+# }
+# parse_cms_branch() {
+# 	if [[ -n $(git branch 2> /dev/null) ]]; then
+# 		parse_git_branch
+# 	elif [[ -n $(svn info 2> /dev/null) ]]; then
+# 		parse_svn_branch
+# 	fi
+# }
+
+# New, simpler way
+function is_on_git() {
+  git rev-parse 2> /dev/null
 }
 
-# Check the current directory and below for dirtiness - about 20ms slower
-parse_svn_dirty_wd() {
-	`svn status -q 2> /dev/null | $GREPPRG '^\s\{0,7\}[ADMR]' > /dev/null` && echo "*"
+function parse_git_dirty() {
+  [[ $(git status 2> /dev/null | tail -n1) != *"working directory clean"* ]] && echo "±"
 }
 
-# Check the entire local working copy for dirtiness - about 20ms slower
-parse_svn_dirty_fd2() {
-	if [[ $(svnversion) != "Unversioned directory" ]]; then
-		WCRP=`svn info | $GREPPRG 'Working Copy Root Path' | awk 'BEGIN { FS=": " };{ print $2 }'`
-		`svn status -q $WCRP 2> /dev/null | $GREPPRG '^\s\{0,7\}[ADMR]' > /dev/null` && echo "*"
-	fi
+function parse_git_branch() {
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
 }
 
-# Check the entire local working copy for dirtiness
-parse_svn_dirty_fd() {
-	[[ -n $(svn stat -q $(svn info 2> /dev/null | $GREPPRG 'Work' | sed 's:Work.+\: \(.+\)$:\1:') 2> /dev/null | $GREPPRG '^[MA]') ]] && echo "*"
-}
-
-parse_svn_branch() {
-	svn info 2> /dev/null | $GREPPRG  '^URL' | sed "s:^URL.*branches/\([^/]*\)/.*$:$(parse_svn_dirty_fd)\1$(parse_svn_dirty_wd):"
-}
-
-parse_cms_branch() {
-	if [[ -n $(git branch 2> /dev/null) ]]; then
-		parse_git_branch
-	elif [[ -n $(svn info 2> /dev/null) ]]; then
-		parse_svn_branch
-	fi
-}
+# Rename screen window
+function rename_screen_tab () { echo -ne "\x1bk$@\x1b\\"; return 0; }
 
 #PS1="\[$BASE03\]BASE03\n";
 #PS1="$PS1\[${BOLD}${BASE03}\]BASE03\n";
@@ -169,17 +181,33 @@ parse_cms_branch() {
 if [[ "$HOSTNAME" =~ ord ]]; then
 	HOSTCOLOR=$RED
 elif [[ "$HOSTNAME" =~ dfw ]]; then
-	HOSTCOLOR=$YELLOW
+	HOSTCOLOR=$ORANGE
 else
 	HOSTCOLOR=$VIOLET
 fi
 
-PS1="\[${BOLD}${VIOLET}\]\u"
-PS1="$PS1\[$BASE1\]@"
-PS1="$PS1\[$HOSTCOLOR\]\h"
-PS1="$PS1\[$BASE2\]:"
+MYHOST=$(echo $HOSTNAME | sed 's/[.][^.]*[.][^.]*$//')
+PS1="\[${BOLD}${YELLOW}\]\d "
+PS1="$PS1\A "
 PS1="$PS1\[$GREEN\]\w"
-PS1="$PS1\[$BASE1\]\$([[ -n \$(git branch 2> /dev/null) || \$(svn info 2> /dev/null ) ]] && echo \" on \")"
-PS1="$PS1\[$YELLOW\]\$(parse_cms_branch)"
-PS1="$PS1\[$BASE1\]\n\$ "
-PS1="$PS1\[$RESET\]"
+PS1="$PS1\$(is_on_git && [[ -n \$(git branch 2> /dev/null) ]] && echo \"\[$BASE2\]:\[$BLUE\]\")\$(parse_git_branch)"
+PS1="$PS1\n"
+PS1="$PS1\[$VIOLET\]\u"
+PS1="$PS1\[$BASE1\]@"
+PS1="$PS1\[$HOSTCOLOR\]$MYHOST"
+PS1="$PS1\[$BASE2\] >\[$RESET\] "
+
+# Previous one line
+# PS1="\[${BOLD}${VIOLET}\]\u"
+# PS1="$PS1\[$BASE1\]@"
+# PS1="$PS1\[$HOSTCOLOR\]\h"
+# PS1="$PS1\[$BASE2\]:"
+# PS1="$PS1\[$GREEN\]\w"
+# PS1="$PS1\[$BASE1\]\$([[ -n \$(git branch 2> /dev/null) || \$(svn info 2> /dev/null ) ]] && echo \" on \")"
+# PS1="$PS1\[$YELLOW\]\$(parse_cms_branch)"
+# PS1="$PS1\[$BASE1\]\n\$ "
+# PS1="$PS1\[$RESET\]"
+
+if [ $TERM == 'screen' ] ; then
+  PROMPT_COMMAND='rename_screen_tab ${MYHOST}'
+fi
