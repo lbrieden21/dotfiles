@@ -1113,7 +1113,7 @@ autocmd BufNewFile,BufRead *.css set ft=javascript
 "au FileType html,php,javascript,sql,perl,rgt,c,smarty setlocal list
 "au FileType javascript,javascript.jsx,json,css setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 au FileType php,javascript,sql,perl,rgt,c,smarty setlocal list
-au FileType javascript,javascript.jsx,json,css,html setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
+au FileType javascript,javascript.jsx,json,css,html,yaml,puppet,sh setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 
 " vim-fugitive bindings
 " Each time you open a git object using fugitive it creates a new buffer. This
