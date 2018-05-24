@@ -74,8 +74,6 @@ alias showAllFilesN='defaults write com.apple.finder AppleShowAllFiles NO'
 alias flushdnscache="sudo dscacheutil -flushcache"
 # clean files mac shits out everywhere
 alias clnmac="find . -name '*.DS_Store' -type f -delete"
-# surely can do this better these days???
-alias cigrep="~/bin/cigrep.mod"
 # run local on mac when fs01ets shell pmonitor-webload left tab color
 alias resetTab='echo -ne "\033]6;1;bg;*;default\a"'
 
