@@ -87,6 +87,9 @@ alias ccaccept="php codecept.phar run -c projects/ets acceptance"
 alias ccfunctional="php codecept.phar run -c projects/ets functional"
 alias cccleartmp="find ../../public/{download,upload,logs}/ -type f -delete ; find tests/_output/ -type f -delete"
 
+# pull in latest varops changes on production servers
+alias vup="sudo su - ops -c 'cd /var/ops/.varops ; git pull'"
+
 # FIXME ETS system specific aliases, should be removed once ETS no more (or made generic enough
 # to work on non-ETS systems)
 if [[ "$HOSTNAME" =~ ets ]]; then
