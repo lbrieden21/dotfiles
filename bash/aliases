@@ -55,6 +55,10 @@ alias eb='vim ~/dotfiles/bash/{bash_profile,aliases,exports,functions,path,bash_
 alias ev='vim ~/dotfiles/vim/vimrc'
 alias et='vim ~/.tmux.conf'
 
+# find running processes
+alias psg="ps aux | grep -v grep | grep "
+alias psgi="ps aux | grep -v grep | grep -i "
+
 alias grep='grep --color'
 alias gphpdoc="grep -E '^\s*/?\*+'"
 alias gs='ps aux | grep [s]sh'
