@@ -33,6 +33,11 @@ function ipvs() {
   sudo ipvsadm -l -n -t ${ip}:443
 }
 
+# count the number of open files for a usre
+function ofiles() {
+  sudo lsof -u $1 | awk 'BEGIN { total = 0; } $4 ~ /^[0-9]/ { total += 1 } END { print total }'
+}
+
 # UpdateSshConfig - switch whether to tunnel through proxy depending on current IP (should only be run on laptop)
 function ussh() {
 	local alchemyhosts="fs01sb fs01test cc01test jnkmas01 jnkagt01 jnkagt02 jnkagt03 db01sb fs01prod sisdb fs01ets db01ets db02ets fs02etsdev db03etsdev jmeter01ets dbbackup01"
