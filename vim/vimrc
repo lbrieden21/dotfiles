@@ -85,6 +85,7 @@ if version >= 800
   " ALE (Asynchronous Lint Engine) is a plugin for providing linting in NeoVim
   " and Vim 8 while you edit your text files.
   Plug 'w0rp/ale'
+  Plug 'skaji/syntax-check-perl'
 else
   " Syntax checker for many languages
   " https://github.com/scrooloose/syntastic
@@ -613,7 +614,7 @@ let g:ale_php_phpcs_standard = 'phpcs.xml'
 " let g:ale_fixers.javascript = ['eslint']
 " Turn on all php linters except phpcs and phpmd
 let g:ale_linters = {
-\   'php': ['hack', 'langserver', 'php', 'phpstan'],
+\   'php': ['hack', 'langserver', 'php', 'phpstan'], 'perl': ['syntax-check'],
 \}
 " Unless we are in api or phpunit directories, then turn on ones we actually use
 let g:ale_pattern_options = {
