@@ -31,7 +31,7 @@ export HISTCONTROL=ignoredups
 export MANPAGER="less -X"
 
 # FIXME this really should be machine/system vs hostname based
-if [[ $HOSTNAME = 'Server1' || $HOSTNAME = 'MediaPlayer1' ]]; then
+if [[ $HOSTNAME = 'server1' || $HOSTNAME = 'MediaPlayer1' ]]; then
 	export TERM='xterm'
 	export COLORTERM='gnome-256color'
 fi

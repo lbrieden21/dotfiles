@@ -147,7 +147,7 @@ function tomcatControl() {
 	fi
 }
 
-if [[ $HOSTNAME = 'Server1' ]]; then
+if [[ $HOSTNAME = 'server1' ]]; then
 	function mediaPermissions() {
 		sudo chown -R media.media $1
 		sudo chmod -R ug=rwX,o-rwx $1
