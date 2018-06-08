@@ -60,6 +60,9 @@ Plug 'ctrlpvim/ctrlp.vim'
 " ctrlp-funky adds function navigation to ctrlp
 Plug 'tacahiroy/ctrlp-funky'
 
+" An extension to ctrlp.vim for deleting open buffers
+Plug 'j5shi/ctrlp_bdelete.vim'
+
 " Tabular.vim is a plugin that aligns text by some pattern, e.g.:
 " :Tab /,
 " will align lines by their commas. We have some mappings set up later, like
@@ -674,6 +677,9 @@ nnoremap <Leader>fu :CtrlPFunky<Cr>
 " narrow the list down with a word under cursor
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 let g:ctrlp_funky_nudists = [ 'php' ]
+
+" ctrlp_bdelete config
+call ctrlp_bdelete#init()
 
 " Greper config
 nmap <silent> <leader>a <Plug>GreperBangWord
