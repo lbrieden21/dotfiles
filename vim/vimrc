@@ -747,7 +747,9 @@ set statusline+=\ [%l\/%L:\%v] "line number and column number
 " Airline.vim customizations
 " Use the poweline fonts to make airline pretty
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
+if version >= 703
+  let g:airline#extensions#tabline#enabled = 1
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " MAPPINGS
