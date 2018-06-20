@@ -10,8 +10,9 @@ fi
 alias ll="ls -lh"
 alias la="ll -a"
 alias lsa="ls -a"
-alias lsd='ls -lha | grep --color=never "^d"'
-alias lso='ls -A | grep "^\."'
+alias lsd="ll -d"
+alias lsdo='ls -lha | grep --color=never "^d"'
+alias lsh='ls -A | grep "^\."'
 alias lm="ls -m"
 alias lt="ls -lht"
 alias ltr="ls -lhtr"
@@ -21,8 +22,9 @@ alias lssr="ls -lhr --sort=size"
 alias sll="sls -lh"
 alias sla="sll -a"
 alias slsa="sls -a"
-alias slsd='sls -lha | grep --color=never "^d"'
-alias slso='sls -A | grep "^\."'
+alias slsd="sll -d"
+alias slsdo='sls -lha | grep --color=never "^d"'
+alias slsh='sls -A | grep "^\."'
 alias slm="sls -m"
 alias slt="sls -lht"
 alias sltr="sls -lhtr"
