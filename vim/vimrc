@@ -187,6 +187,11 @@ Plug 'EinfachToll/DidYouMean'
 Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-git'
 
+" Python support
+" Generate Python docstring to your Python script file
+" https://github.com/heavenshell/vim-pydocstring
+Plug 'heavenshell/vim-pydocstring', { 'for': ['python'] }
+
 " Tools and environment to make Vim superb for developing with Node.jS
 " https://github.com/moll/vim-node
 Plug 'moll/vim-node', { 'for': ['javascript', 'javascript.jsx'] }
@@ -570,6 +575,9 @@ let g:session_autosave_periodic = 5
 let g:session_autosave_silent = 1
 " let g:session_verbose_messages = 1
 " let g:session_autoload = 'yes'
+
+" vim-pydocstring Config to change activation key to <C-d>
+nmap <silent> <C-d> <Plug>(pydocstring)
 
 " vim-json config
 let g:vim_json_syntax_conceal = 0
