@@ -577,7 +577,7 @@ let g:session_autosave_silent = 1
 " let g:session_autoload = 'yes'
 
 " vim-pydocstring Config to change activation key to <C-d>
-nmap <silent> <C-d> <Plug>(pydocstring)
+nmap <silent> <C-s> <Plug>(pydocstring)
 
 " vim-json config
 let g:vim_json_syntax_conceal = 0
