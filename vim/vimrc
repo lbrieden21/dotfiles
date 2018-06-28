@@ -306,6 +306,11 @@ Plug 'tpope/vim-jdaddy'
 " https://github.com/tpope/git-bump
 " Plug 'tpope/git-bump'
 
+" VIM Table Mode for instant table creation
+" https://github.com/dhruvasagar/vim-table-mode
+" <leader>tm enables table mode
+Plug 'dhruvasagar/vim-table-mode'
+
 " Make vim more Puppet friendly!
 " https://github.com/rodjek/vim-puppet
 Plug 'rodjek/vim-puppet'
