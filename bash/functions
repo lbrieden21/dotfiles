@@ -157,3 +157,10 @@ if [[ $HOSTNAME = 'server1' ]]; then
 		sudo chmod -R ug=rwX,o-rwx $1
 	}
 fi
+
+# temporary for grabbing db01test mysql-status log files for research
+function grabDbStatusLogs() {
+  scp db01test.dfw.alchemysystems.com:/var/log/mysql-status/$(gdate --utc --date='yesterday' +%A) /Users/lbrieden/Projects/it/mysql-status_logs/db01test-dfw/db01test-dfw_mysql-status_$(gdate --utc --date='yesterday' +%Y%m%d)
+  scp db01stats-mgr01prod-dfw.alchemy-ops.com:/var/log/mysql-status/$(gdate --utc --date='yesterday' +%A) /Users/lbrieden/Projects/it/mysql-status_logs/db01stats-mgr01prod-dfw/db01stats-mgr01prod-dfw_mysql-status_$(gdate --utc --date='yesterday' +%Y%m%d)
+  scp sisdb.ord.alchemysystems.com:/var/log/mysql-status/$(gdate --utc --date='yesterday' +%A) /Users/lbrieden/Projects/it/mysql-status_logs/sisdb-ord/sisdb-ord_mysql-status_$(gdate --utc --date='yesterday' +%Y%m%d)
+}
