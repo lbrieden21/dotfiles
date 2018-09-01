@@ -2,6 +2,10 @@ if [ -d $HOME/.composer/vendor/bin ]; then
 	PATH="$HOME/.composer/vendor/bin:$PATH"
 fi
 
+if [ -d /usr/sbin ]; then
+	PATH="/usr/sbin:$PATH"
+fi
+
 if [ -d /usr/local/sbin ]; then
 	PATH="/usr/local/sbin:$PATH"
 fi
