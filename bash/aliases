@@ -61,6 +61,9 @@ alias vihs='vim -o'
 alias vivs='vim -O'
 alias lvim='vim -c "normal '\''0"'
 alias lmvim='mvim -c "normal '\''0"'
+alias svim='sudo vim'
+alias sview='sudo vim -R'
+
 # clean vim swp files (shouldn't be a problem with current centralized storage)
 alias clnswp='find . -name .*.sw[mnop] -type f -delete'
 
