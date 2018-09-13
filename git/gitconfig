@@ -45,7 +45,7 @@
 
 	# Remove branches that have already been merged with master
 	# a.k.a. ‘delete merged’
-	dm = "!git branch --no-color --merged | grep -v '\\*' | grep -v master | grep -v development | xargs -n 1 git branch -d"
+	# dm = "!git branch --no-color --merged | grep -v '\\*' | grep -v master | grep -v development | xargs -n 1 git branch -d"
 
 	# Show the diff and log of the last change for a file
 	# git lastchange package.json
