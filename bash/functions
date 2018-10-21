@@ -33,7 +33,7 @@ function ipvs() {
   sudo ipvsadm -l -n -t ${ip}:443
 }
 
-# count the number of open files for a usre
+# count the number of open files for a user
 function ofiles() {
   sudo lsof -u $1 | awk 'BEGIN { total = 0; } $4 ~ /^[0-9]/ { total += 1 } END { print total }'
 }
@@ -41,6 +41,11 @@ function ofiles() {
 # kill old user processes
 function sak { ps aux | grep $1 | grep -v grep | awk '{ print $2 }' | xargs sudo kill ;}
 function sak9 { ps aux | grep $1 | grep -v grep | awk '{ print $2 }' | xargs sudo kill -9 ;}
+
+# Show what processes are using swap space
+function swapuse() {
+  for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 " " $3}END{ print ""}' $file; done | sort -k 2 -n -r | less
+}
 
 # UpdateSshConfig - switch whether to tunnel through proxy depending on current IP (should only be run on laptop)
 function ussh() {
