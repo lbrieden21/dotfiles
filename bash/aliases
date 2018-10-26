@@ -96,81 +96,11 @@ alias showAllFilesN='defaults write com.apple.finder AppleShowAllFiles NO'
 alias flushdnscache="sudo dscacheutil -flushcache"
 # clean files mac shits out everywhere
 alias clnmac="find . -name '*.DS_Store' -type f -delete"
-# run local on mac when fs01ets shell pmonitor-webload left tab color
-alias resetTab='echo -ne "\033]6;1;bg;*;default\a"'
 
 # apache stats (apache-status module must be installed)
-alias webps-ets='curl -s http://localhost/server/status/x | html2text | grep "^[0-9]*-[0-9]*" | grep -v -E "( \. | \_ )"'
 alias webps="sudo service apache fullstatus | grep '^ *[0-9]' | grep -v -E '( \. | \_ )'"
 alias webpss="webps | awk '{ if (\$6 <= 3600) print \$0 ; }'"
 alias webpslong="webps | awk '{ if (\$6 >= 3600) print \$0 ; }'"
 
-# testing
-alias ccaccept="php codecept.phar run -c projects/ets acceptance"
-alias ccfunctional="php codecept.phar run -c projects/ets functional"
-alias cccleartmp="find ../../public/{download,upload,logs}/ -type f -delete ; find tests/_output/ -type f -delete"
-
 # pull in latest varops changes on production servers
 alias vup="sudo su - ops -c 'cd /var/ops/.varops ; git pull'"
-
-# FIXME ETS system specific aliases, should be removed once ETS no more (or made generic enough
-# to work on non-ETS systems)
-if [[ "$HOSTNAME" =~ ets ]]; then
-	alias cdpc="cd $PRODCODE"
-	alias cdpl="cd $PRODLOGS"
-	alias cdps="cd $PRODSCORES"
-	alias cdpf="cd $PRODFEEDS"
-	alias cdpe="cd $PRODEXPORTS"
-	alias cdpt="cd $PRODTEXGOV"
-	alias cdsc="cd $STAGECODE"
-	alias cdsl="cd $STAGELOGS"
-	alias cdss="cd $STAGESCORES"
-	alias cdsf="cd $STAGEFEEDS"
-	alias cdse="cd $STAGEEXPORTS"
-	alias cdst="cd $STAGETEXGOV"
-	alias cdtc="cd $TRAININGCODE"
-	alias cdtl="cd $TRAININGLOGS"
-	alias cdts="cd $TRAININGSCORES"
-	alias cdtf="cd $TRAININGFEEDS"
-	alias cdte="cd $TRAININGEXPORTS"
-	alias pmonitor-r2c='tail -f $PRODLOGS/cron01ets56.ord.alchemysystems.com_release_to_candidate.log'
-	alias pmonitor-etsfeed='tail -f $PRODLOGS/cron01ets56.ord.alchemysystems.com_etsfeed.log'
-	alias pmonitor-cron='tail -f $PRODLOGS/cron01ets56.ord.alchemysystems.com_cron.log'
-	alias pmonitor-realtime='tail -f $PRODLOGS/cron01ets56.ord.alchemysystems.com_{etsfeed,prepared_reg_data_engine,cron}.log'
-	alias pmonitor-manualfeeds='tail -f $PRODLOGS/{web,cron}0[1234]ets56.ord.alchemysystems.com_{etsfeed,prepared_reg_data_engine,cron}.log'
-	alias pmonitor-ssalogs='tail -f $PRODLOGS/web0[1234]ets56.ord.alchemysystems.com_xml_{sent,received}.log'
-	alias pmonitor-ssalogs-received='tail -f $PRODLOGS/web0[1234]ets56.ord.alchemysystems.com_xml_received.log'
-	alias pmonitor-eligibility='tail -f $PRODLOGS/web0[1234]ets56.ord.alchemysystems.com_le_*.log'
-	alias pmonitor-ats='tail -f $PRODLOGS/web0[1234]ets56.ord.alchemysystems.com_ats.log'
-	alias pmonitor-ats-status='tail -f $PRODLOGS/web0[1234]ets56.ord.alchemysystems.com_ats.log | grep Status: '
-	alias pmonitor-error='tail -f $PRODLOGS/web0[1234]ets56.ord.alchemysystems.com_error.log'
-	alias pmonitor-payment='tail -f $PRODLOGS/web0[1234]ets56.ord.alchemysystems.com_{payment,refund,cps}*.log'
-	alias smonitor-etsfeed='tail -f $STAGELOGS/cron01ets56.ord.alchemysystems.com_etsfeed.log'
-	alias smonitor-cron='tail -f $STAGELOGS/cron01ets56.ord.alchemysystems.com_cron.log'
-	alias smonitor-realtime='tail -f $STAGELOGS/cron01ets56.ord.alchemysystems.com_{etsfeed,prepared_reg_data_engine,cron}.log'
-	alias smonitor-manualfeeds='tail -f $STAGELOGS/{web,cron}0[1234]ets56.ord.alchemysystems.com_{etsfeed,prepared_reg_data_engine,cron}.log'
-	alias smonitor-ssalogs='tail -f $STAGELOGS/web0[1234]ets56.ord.alchemysystems.com_xml_{sent,received}.log'
-	alias smonitor-ssalogs-received='tail -f $STAGELOGS/web0[1234]ets56.ord.alchemysystems.com_xml_received.log'
-	alias smonitor-eligibility='tail -f $STAGELOGS/web0[1234]ets56.ord.alchemysystems.com_le_*.log'
-	alias smonitor-ats='tail -f $STAGELOGS/web0[1234]ets56.ord.alchemysystems.com_ats.log'
-	alias smonitor-ats-status='tail -f $STAGELOGS/web0[1234]ets56.ord.alchemysystems.com_ats.log | grep Status: '
-	alias smonitor-error='tail -f $STAGELOGS/web0[1234]ets56.ord.alchemysystems.com_error.log'
-	alias smonitor-payment='tail -f $STAGELOGS/web0[1234]ets56.ord.alchemysystems.com_{payment,refund,cps}*.log'
-	alias tmonitor-etsfeed='tail -f $TRAININGLOGS/cron01ets56.ord.alchemysystems.com_etsfeed.log'
-	alias tmonitor-cron='tail -f $TRAININGLOGS/cron01ets56.ord.alchemysystems.com_cron.log'
-	alias tmonitor-realtime='tail -f $TRAININGLOGS/cron01ets56.ord.alchemysystems.com_{etsfeed,prepared_reg_data_engine,cron}.log'
-	alias tmonitor-manualfeeds='tail -f $TRAININGLOGS/{web,cron}0[1234]ets56.ord.alchemysystems.com_{etsfeed,prepared_reg_data_engine,cron}.log'
-	alias tmonitor-ssalogs='tail -f $TRAININGLOGS/web0[1234]ets56.ord.alchemysystems.com_xml_{sent,received}.log'
-	alias tmonitor-eligibility='tail -f $TRAININGLOGS/web0[1234]ets56.ord.alchemysystems.com_le_*.log'
-	alias tmonitor-ats='tail -f $TRAININGLOGS/web0[1234]ets56.ord.alchemysystems.com_ats.log'
-	alias tmonitor-ats-status='tail -f $TRAININGLOGS/web0[1234]ets56.ord.alchemysystems.com_ats.log | grep Status: '
-	alias tmonitor-error='tail -f $TRAINLOGS/web0[1234]ets56.ord.alchemysystems.com_error.log'
-	alias todaystats='echo "ServerLoad" && monitor-uniqloadavg && echo "DbThreads" && monitor-uniqloadavg db'
-
-	# ssh to webservers
-	alias web1='ssh web01ets56'
-	alias web2='ssh web02ets56'
-	alias web3='ssh web03ets56'
-	alias web4='ssh web04ets56'
-	alias web5='ssh web05ets56'
-fi
