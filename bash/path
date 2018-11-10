@@ -16,4 +16,5 @@ if type port >/dev/null 2>/dev/null; then
 fi
 
 # clean up any duplicates
-export PATH=$(echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++')
+#export PATH=$(echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++')
+export PATH=$(echo -n $PATH | awk -v RS=: '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? ":" : "", $0)}')
