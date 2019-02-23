@@ -1147,7 +1147,7 @@ autocmd BufReadPost fugitive://* set bufhidden=delete
 " parent directory. Running the following command will open the parent tree:
 " :edit %:h
 autocmd User fugitive
-  \ if fugitive#buffer().type() =~# '^\%(tree\|blob\)$' |
+  \ if get(b:, 'fugitivie_type', '') =~# '^\%(tree\|blob\)$' |
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
