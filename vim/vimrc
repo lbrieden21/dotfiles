@@ -825,9 +825,6 @@ inoremap <C-t> <Esc>:tabnew<CR>
 "inoremap <C-j> <Esc>:tabprevious<CR>i
 "inoremap <C-k> <Esc>:tabnext<CR>i
 
-" Allow writing via sudo
-cnoremap w!! w !sudo tee > /dev/null %
-
 " Make crl-a work in command mode
 cnoremap <c-a> <home>
 cnoremap <c-e> <end>
