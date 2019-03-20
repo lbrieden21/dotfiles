@@ -180,7 +180,7 @@ function rename_screen_tab () { echo -ne "\x1bk$@\x1b\\"; return 0; }
 # hostname color depending, red for ORD servers, yellow for DFW servers, violet other
 if [[ "$HOSTNAME" =~ ord ]]; then
 	HOSTCOLOR=$RED
-elif [[ "$HOSTNAME" =~ dfw ]]; then
+elif [[ "$HOSTNAME" =~ dfw|aus ]]; then
 	HOSTCOLOR=$ORANGE
 else
 	HOSTCOLOR=$VIOLET
