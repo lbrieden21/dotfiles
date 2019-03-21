@@ -15,6 +15,11 @@ if type port >/dev/null 2>/dev/null; then
 	PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 fi
 
+# fzf bin directory
+if [ -d $HOME/.fzf/bin ]; then
+	PATH="$PATH:$HOME/.fzf/bin"
+fi
+
 # clean up any duplicates
 #export PATH=$(echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++')
 export PATH=$(echo -n $PATH | awk -v RS=: '!($0 in a) {a[$0]; printf("%s%s", length(a) > 1 ? ":" : "", $0)}')

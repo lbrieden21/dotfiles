@@ -40,22 +40,23 @@ fi
 #	. /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/powerline/bindings/bash/powerline.sh
 #fi
 
-# fzf via Homebrew
-#if [ -e /usr/local/opt/fzf/shell/completion.bash ]; then
-#  source /usr/local/opt/fzf/shell/key-bindings.bash
-#  source /usr/local/opt/fzf/shell/completion.bash
-#fi
-#
+# fzf via git install
+if [ -e $HOME/.fzf/shell/completion.bash ]; then
+  set -o vi
+  source $HOME/.fzf/shell/key-bindings.bash
+  source $HOME/.fzf/shell/completion.bash
+fi
+
 ## fzf + ag configuration
-#if command -v fzf > /dev/null && command -v ag > /dev/null; then
-#  export FZF_DEFAULT_COMMAND='ag --nocolor -g ""'
-#  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-#  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
-#  export FZF_DEFAULT_OPTS='
-#  --color dark,hl:33,hl+:37,fg+:235,bg+:136,fg+:254
-#  --color info:254,prompt:37,spinner:108,pointer:235,marker:235
-#  '
-#fi
+if command -v fzf > /dev/null && command -v ag > /dev/null; then
+  export FZF_DEFAULT_COMMAND='ag --nocolor -g ""'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_DEFAULT_OPTS='
+  --color dark,hl:33,hl+:37,fg+:235,bg+:136,fg+:254
+  --color info:254,prompt:37,spinner:108,pointer:235,marker:235
+  '
+fi
 
 [ -r ~/.extra ] && source ~/.extra
 

@@ -1,8 +1,8 @@
 set completion-ignore-case on
 set show-all-if-ambiguous on
 set mark-symlinked-directories on
-#"\e[B": history-search-forward
-#"\e[A": history-search-backward
+# "\e[B": history-search-forward
+# "\e[A": history-search-backward
 set match-hidden-files off
 set show-all-if-ambiguous on
 set page-completions off
@@ -13,6 +13,7 @@ set input-meta on
 set output-meta on
 set convert-meta off
 #"\e[3;3~": kill-word
+
 set editing-mode vi
 set keymap vi-command
 #set print-completions-horizontally
