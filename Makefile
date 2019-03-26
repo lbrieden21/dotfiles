@@ -22,3 +22,7 @@ gitTools:
 	ln -s $(DIR)/git-clones/git-recent/git-recent $(DIR)/bin/
 	git clone git@github.com:paulirish/git-open.git $(DIR)/git-clones/git-open/
 	ln -s $(DIR)/git-clones/git-open/git-open $(DIR)/bin/
+
+install_fzf:
+	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+	~/.fzf/install
