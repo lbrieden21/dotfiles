@@ -24,5 +24,5 @@ gitTools:
 	ln -s $(DIR)/git-clones/git-open/git-open $(DIR)/bin/
 
 install_fzf:
-	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+	git clone --depth 1 git://github.com/junegunn/fzf.git ~/.fzf
 	~/.fzf/install
