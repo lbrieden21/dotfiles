@@ -1,6 +1,6 @@
 DIR=~/dotfiles
 
-all: symlinks install_vimplug
+all: symlinks install_vimplug install_fzf
 
 symlinks:
 	@ln -sf $(DIR)/bash/bash_profile ~/.bash_profile

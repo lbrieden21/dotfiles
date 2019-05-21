@@ -182,8 +182,10 @@ if [[ "$HOSTNAME" =~ ord ]]; then
 	HOSTCOLOR=$RED
 elif [[ "$HOSTNAME" =~ dfw|aus ]]; then
 	HOSTCOLOR=$ORANGE
-else
+elif [[ "$HOSTNAME" = 'lbrieden-mbp' ]]; then
 	HOSTCOLOR=$VIOLET
+else
+	HOSTCOLOR=$MAGENTA
 fi
 
 MYHOST=$(echo $HOSTNAME | sed 's/[.][^.]*[.][^.]*$//')
