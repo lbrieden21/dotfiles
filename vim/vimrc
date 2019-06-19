@@ -57,15 +57,15 @@ Plug 'jiangmiao/auto-pairs'
 " https://github.com/ctrlpvim/ctrlp.vim
 " Plug 'ctrlpvim/ctrlp.vim'
 
+" An extension to ctrlp.vim for deleting open buffers
+" Plug 'j5shi/ctrlp_bdelete.vim'
+
 " ctrlp-funky adds function navigation to ctrlp
 " Plug 'tacahiroy/ctrlp-funky'
 
 " FZF (replaces Ctrl-P, FuzzyFinder and Command-T)
 Plug '~/.fzf'
 Plug 'junegunn/fzf.vim'
-
-" An extension to ctrlp.vim for deleting open buffers
-Plug 'j5shi/ctrlp_bdelete.vim'
 
 " Tabular.vim is a plugin that aligns text by some pattern, e.g.:
 " :Tab /,
@@ -318,6 +318,13 @@ Plug 'dhruvasagar/vim-table-mode'
 " Make vim more Puppet friendly!
 " https://github.com/rodjek/vim-puppet
 Plug 'rodjek/vim-puppet'
+
+" A Vim wrapper for running tests on different granularities.
+" https://github.com/janko-m/vim-test
+Plug 'janko-m/vim-test'
+
+" Bbye allows you to do delete buffers (close files) without closing your windows or messing up your layout.
+Plug 'moll/vim-bbye'
 
 " Plugins to load on OS X only
 if has("unix")
@@ -1006,8 +1013,9 @@ nmap <Leader>~~ :e $MYVIMRC<CR>
 " Write file
 nmap <leader>w :w<CR>
 
-" Delete buffer
-nmap <leader>q :bd<CR>
+" Delete buffer (using vim-bbye)
+" nmap <leader>q :bd<CR>
+nmap <leader>q :Bdelete<CR>
 
 " Hide buffer
 nmap <leader>Q :hide<CR>
@@ -1085,6 +1093,13 @@ nnoremap <Leader>t> :Tabularize /=>/<CR>
 vnoremap <Leader>t> :Tabularize /=>/<CR>
 nnoremap <Leader>t# :Tabularize /#/<CR>
 vnoremap <Leader>t# :Tabularize /#/<CR>
+
+" vim-test
+nnoremap <leader>tn :TestNearest<CR>
+nnoremap <leader>tf :TestFile<CR>
+nnoremap <leader>ts :TestSuite<CR>
+nnoremap <leader>tl :TestLast<CR>
+nnoremap <leader>tv :TestVisit<CR>
 
 " Toggle numbers
 nmap <leader>n :setlocal number!<CR><bar>:setlocal relativenumber!<CR>
