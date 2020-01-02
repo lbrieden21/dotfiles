@@ -182,7 +182,7 @@ if [[ "$HOSTNAME" =~ ord ]]; then
 	HOSTCOLOR=$RED
 elif [[ "$HOSTNAME" =~ dfw|aus ]]; then
 	HOSTCOLOR=$ORANGE
-elif [[ "$HOSTNAME" = 'lbrieden-mbp' ]]; then
+elif [[ "$HOSTNAME" =~ lbrieden.+mbp ]]; then
 	HOSTCOLOR=$VIOLET
 else
 	HOSTCOLOR=$MAGENTA
