@@ -11,7 +11,7 @@ if [ -d /usr/local/sbin ]; then
 fi
 
 # Macports bin directories
-if type port >/dev/null 2>/dev/null; then
+if [ -d /opt/local/bin ]; then
 	PATH="/opt/local/bin:/opt/local/sbin:$PATH"
 fi
 
