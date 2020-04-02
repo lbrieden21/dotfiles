@@ -11,6 +11,10 @@ function gh() {
 	history | grep "$1"
 }
 
+function ghi() {
+	history | grep -i "$1"
+}
+
 # fuzzy grep open via ag with line number
 vg() {
   local file
