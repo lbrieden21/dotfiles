@@ -118,7 +118,7 @@ Plug 'rizzatti/dash.vim'
 " https://github.com/rizzatti/funcoo.vim
 Plug 'rizzatti/funcoo.vim'
 
-if has('python') && version >= 704
+if (has('python') || has('python3')) && version >= 704
   " UltiSnips - The ultimate snippet solution for Vim.
   " https://github.com/SirVer/ultisnips
   Plug 'SirVer/ultisnips'
@@ -617,6 +617,9 @@ let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" SnipMate config
+let g:snipMate = { 'snippet_version': 0 }
 
 " easier emojis!
 set completefunc=emoji#complete
