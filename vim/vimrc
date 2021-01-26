@@ -216,6 +216,10 @@ Plug 'moll/vim-node', { 'for': ['javascript', 'javascript.jsx'] }
 " Javascript Syntax Support
 Plug 'elzr/vim-json'
 
+" Typescript support
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+
 let s:js_mode = 'othree'
 if s:js_mode ==# 'pangloss'
   " PANGLOSS MODE
@@ -1204,7 +1208,7 @@ autocmd BufNewFile,BufRead *.css set ft=javascript
 "au FileType html,php,javascript,sql,perl,rgt,c,smarty setlocal list
 "au FileType javascript,javascript.jsx,json,css setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 au FileType php,javascript,sql,perl,rgt,c,smarty setlocal list
-au FileType javascript,javascript.jsx,json,css,html,yaml,puppet,sh,ruby,eruby setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
+au FileType javascript,javascript.jsx,json,css,html,yaml,puppet,sh,ruby,eruby,tsx,typescriptreact,perl setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 
 " vim-fugitive bindings
 " Each time you open a git object using fugitive it creates a new buffer. This
