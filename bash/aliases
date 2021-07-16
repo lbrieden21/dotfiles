@@ -98,7 +98,7 @@ alias svndiff='svn diff --diff-cmd=svndiff_helper'
 # MacOS
 alias showAllFilesY='defaults write com.apple.finder AppleShowAllFiles YES'
 alias showAllFilesN='defaults write com.apple.finder AppleShowAllFiles NO'
-alias flushdnscache="sudo dscacheutil -flushcache"
+alias flushdnscache="sudo dscacheutil -flushcache ; sudo killall -HUP mDNSResponder"
 # clean files mac shits out everywhere
 alias clnmac="find . -name '*.DS_Store' -type f -delete"
 
