@@ -51,3 +51,6 @@ vendor/
 
 # Vim javascript tern
 .tern-port
+
+*.map
+*.min.css
