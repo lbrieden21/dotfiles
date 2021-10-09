@@ -191,3 +191,11 @@ function grabDbStatusLogs() {
   scp db01stats-mgr01prod-dfw.alchemy-ops.com:/var/log/mysql-status/$(gdate --utc --date="$D" +%A) /Users/lbrieden/Projects/it/mysql-status_logs/db01stats-mgr01prod-dfw/db01stats-mgr01prod-dfw_mysql-status_$(gdate --utc --date="$D" +%Y%m%d)
   scp sisdb.ord.alchemysystems.com:/var/log/mysql-status/$(gdate --utc --date="$D" +%A) /Users/lbrieden/Projects/it/mysql-status_logs/sisdb-ord/sisdb-ord_mysql-status_$(gdate --utc --date="$D" +%Y%m%d)
 }
+
+# Decode JWT Token
+jwtd() {
+    if [[ -x $(command -v jq) ]]; then
+         jq -R 'split(".") | .[0],.[1] | @base64d | fromjson' <<< "${1}"
+         echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
+    fi
+}

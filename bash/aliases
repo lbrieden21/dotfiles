@@ -109,3 +109,7 @@ alias webpslong="webps | awk '{ if (\$6 >= 3600) print \$0 ; }'"
 
 # pull in latest varops changes on production servers
 alias vup="sudo su - ops -c 'cd /var/ops/.varops ; git pull'"
+
+# AWS
+alias svls="serverless"
+alias cdk="npx aws-cdk"
