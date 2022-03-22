@@ -86,6 +86,7 @@ alias grep='grep --color'
 alias gphpdoc="grep -E '^\s*/?\*+'"
 alias gs='ps aux | grep [s]sh'
 alias saa='ssh-add ~/.ssh/*[dr]sa'
+alias ifgnet='ifconfig | grep inet'
 
 # VCS
 alias svndiff='svn diff --diff-cmd=svndiff_helper'
