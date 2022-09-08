@@ -86,6 +86,8 @@ alias grep='grep --color'
 alias gphpdoc="grep -E '^\s*/?\*+'"
 alias gs='ps aux | grep [s]sh'
 alias saa='ssh-add ~/.ssh/*[dr]sa'
+alias proxy_ssh='sed -i "/^\t#ProxyCommand/s/#ProxyCommand/ProxyCommand/" ~/.ssh/config'
+alias unproxy_ssh='sed -i "/^\tProxyCommand/s/ProxyCommand/#ProxyCommand/" ~/.ssh/config'
 alias ifgnet='ifconfig | grep inet'
 
 # VCS
