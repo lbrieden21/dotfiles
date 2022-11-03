@@ -39,17 +39,6 @@ function ssh-reagent () {
   echo Cannot find ssh agent - maybe you should reconnect and forward it?
 }
 
-# check ips in loadbalancer
-function ipvs() {
-  if [ "x$1" == "x" ] ; then
-    ip=172.17.100.1
-  else
-    ip=$1
-  fi
-  sudo ipvsadm -l -n -t ${ip}:80
-  sudo ipvsadm -l -n -t ${ip}:443
-}
-
 # count the number of open files for a user
 function ofiles() {
   sudo lsof -u $1 | awk 'BEGIN { total = 0; } $4 ~ /^[0-9]/ { total += 1 } END { print total }'
@@ -64,133 +53,12 @@ function swapuse() {
   for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 " " $3}END{ print ""}' $file; done | sort -k 2 -n -r | less
 }
 
-# UpdateSshConfig - switch whether to tunnel through proxy depending on current IP (should only be run on laptop)
-function ussh() {
-	local alchemyhosts="fs01sb fs01test cc01test jnkmas01 jnkagt01 jnkagt02 jnkagt03 db01sb fs01prod sisdb"
-	if [[ -n $(ifconfig | grep ' 10.100.') ]]; then
-		for h in $alchemyhosts
-		do
-			/opt/local/bin/gsed -i -r -e "/^Host $h/,+1 s/\tProxyCommand/\t#ProxyCommand/" ~/.ssh/config
-		done
-	else
-		for h in $alchemyhosts
-		do
-			/opt/local/bin/gsed -i -r -e "/^Host $h/,+1 s/\t#ProxyCommand/\tProxyCommand/" ~/.ssh/config
-		done
-	fi
-	if [[ -n $(ifconfig | grep ' 192.168.8.') ]]; then
-		/opt/local/bin/gsed -i -r -e "/^Host server1/,+2 s/Hostname lb.dyndns-ip.com/Hostname 192.168.8.21/" ~/.ssh/config
-		/opt/local/bin/gsed -i -r -e "/^Host mediaplayer1/,+1 s/\tProxyCommand/\t#ProxyCommand/" ~/.ssh/config
-	else
-		/opt/local/bin/gsed -i -r -e "/^Host server1/,+2 s/Hostname 192.168.8.21/Hostname lb.dyndns-ip.com/" ~/.ssh/config
-		/opt/local/bin/gsed -i -r -e "/^Host mediaplayer1/,+1 s/\t#ProxyCommand/\tProxyCommand/" ~/.ssh/config
-	fi
-}
-
-# overly efforted method to configure/start/stop/restart tomcat on my mac that I came up with when
-# I first needed to get tomcat setup locally for ETS dev, really not needed
-function tomcatControl() {
-	local tomcatVer="7.0.54"
-	local tomcatDir="/Users/lbrieden/tomcat/apache-tomcat-$tomcatVer"
-	local currentDb=$(readlink $tomcatDir/conf/server.xml | cut -d'-' -f1)
-	local currentCon=$(readlink $tomcatDir/conf/context.xml)
-	local currentServ=$(readlink $tomcatDir/conf/server.xml)
-	if [ "$1" = "start" ]; then
-		if [ -z "$2" -o "$2" = "$currentDb" ]; then
-			if [[ -z $(ps aux | grep '[a]pache-tomcat') ]]; then
-				echo "Starting tomcat with $currentDb database"
-				$tomcatDir/bin/startup.sh
-			else
-				echo "Tomcat already running with $currentDb database"
-			fi
-		elif [ -e "$tomcatDir/conf/$2-context.xml" -a -e "$tomcatDir/conf/$2-server.xml" ]; then
-			if [ "$currentCon" != "$tomcatDir/conf/$2-context.xml" ]; then
-				echo "Changing context.xml link from $currentCon to $2-context.xml"
-				cd $tomcatDir/conf
-				ln -sf $2-context.xml context.xml
-				cd -
-			fi
-			if [ "$currentServ" != "$tomcatDir/conf/$2-server.xml" ]; then
-				echo "Changing server.xml link from $currentServ to $2-server.xml"
-				cd $tomcatDir/conf
-				ln -sf $2-server.xml server.xml
-				cd -
-			fi
-			echo "Starting tomcat with $2 database"
-			$tomcatDir/bin/startup.sh
-		else
-			echo "Error: There are no configuration files for database $2. Make sure it is a valid database and then try running 'tomcatControl create $2'."
-		fi
-	elif [ "$1" = "stop" ]; then
-		if [[ -z $(ps aux | grep -o '[a]pache-tomcat') ]]; then
-			echo "Tomcat is not running"
-		else
-			echo "Stopping Tomcat running with $currentDb database"
-			$tomcatDir/bin/shutdown.sh
-		fi
-	elif [ "$1" = "restart" ]; then
-		if [[ -z $(ps aux | grep '[a]pache-tomcat') ]]; then
-			echo "Tomcat is not running"
-		else
-			echo "Stopping Tomcat running with $currentDb database"
-			$tomcatDir/bin/shutdown.sh
-		fi
-		if [ -z "$2" -o "$2" = "$currentDb" ]; then
-			echo "Restarting tomcat with $currentDb database"
-			$tomcatDir/bin/startup.sh
-		elif [ -e "$tomcatDir/conf/$2-context.xml" -a -e "$tomcatDir/conf/$2-server.xml" ]; then
-			if [ "$currentCon" != "$tomcatDir/conf/$2-context.xml" ]; then
-				echo "Changing context.xml link from $currentCon to $2-context.xml"
-				cd $tomcatDir/conf
-				ln -sf $2-context.xml context.xml
-				cd -
-			fi
-			if [ "$currentServ" != "$tomcatDir/conf/$2-server.xml" ]; then
-				echo "Changing server.xml link from $currentServ to $2-server.xml"
-				cd $tomcatDir/conf
-				ln -sf $2-server.xml server.xml
-				cd -
-			fi
-			echo "Restarting tomcat with $2 database"
-			$tomcatDir/bin/startup.sh
-		else
-			echo "Error: There are no configuration files for database $2. Make sure it is a valid database and then try running 'tomcatControl create $2'."
-		fi
-	elif [ "$1" = "create" ]; then
-		if [ -z "$2" ]; then
-			echo "Error: 'tomcatControl create' requires the name of a database to create configuration files for."
-		elif [ -e "$tomcatDir/conf/$2-context.xml" -o -e "$tomcatDir/conf/$2-server.xml" ]; then
-			echo "Error: Configuration files for $2 database already exists. Try running 'tomcatControl start $2'."
-		else
-			echo "Creating configuration files for $2 database"
-			cp $tomcatDir/conf/context.xml $tomcatDir/conf/$2-context.xml
-			cp $tomcatDir/conf/server.xml $tomcatDir/conf/$2-server.xml
-			/opt/local/bin/gsed -i -r -e "s/$currentDb/$2/g" $tomcatDir/conf/$2-context.xml
-			/opt/local/bin/gsed -i -r -e "s/$currentDb/$2/g" $tomcatDir/conf/$2-server.xml
-		fi
-	else
-		echo "Error: Illegal option. 'tomcatControl action [database]'. Available options are 'start, stop, restart, create'."
-	fi
-}
-
 if [[ $HOSTNAME = 'server1' ]]; then
 	function mediaPermissions() {
 		sudo chown -R media.media $1
 		sudo chmod -R ug=rwX,o-rwx $1
 	}
 fi
-
-# temporary for grabbing db01test mysql-status log files for research
-function grabDbStatusLogs() {
-  if [ -z "$1" ]; then
-    D='yesterday'
-  else
-    D="$1"
-  fi
-  scp db01test.dfw.alchemysystems.com:/var/log/mysql-status/$(gdate --utc --date="$D" +%A) /Users/lbrieden/Projects/it/mysql-status_logs/db01test-dfw/db01test-dfw_mysql-status_$(gdate --utc --date="$D" +%Y%m%d)
-  scp db01stats-mgr01prod-dfw.alchemy-ops.com:/var/log/mysql-status/$(gdate --utc --date="$D" +%A) /Users/lbrieden/Projects/it/mysql-status_logs/db01stats-mgr01prod-dfw/db01stats-mgr01prod-dfw_mysql-status_$(gdate --utc --date="$D" +%Y%m%d)
-  scp sisdb.ord.alchemysystems.com:/var/log/mysql-status/$(gdate --utc --date="$D" +%A) /Users/lbrieden/Projects/it/mysql-status_logs/sisdb-ord/sisdb-ord_mysql-status_$(gdate --utc --date="$D" +%Y%m%d)
-}
 
 # Decode JWT Token
 jwtd() {
