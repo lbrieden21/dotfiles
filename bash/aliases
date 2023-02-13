@@ -1,6 +1,9 @@
 # ls
 # gls is macports coreutils version of gnu ls (vs mac's bsd ls)
-if type gls >/dev/null 2>/dev/null; then
+if ! ls --group-directories-first > /dev/null 2> /dev/null ; then
+	alias ls="ls --color"
+	alias sls="sudo ls --color"
+elif type gls >/dev/null 2>/dev/null; then
 	alias ls="gls -F --color --group-directories-first"
 	alias sls="sudo gls -F --color --group-directories-first"
 else
