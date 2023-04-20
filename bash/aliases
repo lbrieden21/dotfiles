@@ -7,8 +7,8 @@ elif type gls >/dev/null 2>/dev/null; then
 	alias ls="gls -F --color --group-directories-first"
 	alias sls="sudo gls -F --color --group-directories-first"
 else
-	alias ls="ls -F --color --group-directories-first"
-	alias sls="sudo ls -F --color --group-directories-first"
+	alias ls="ls -F --color"
+	alias sls="sudo ls -F --color"
 fi
 alias ll="ls -lh"
 alias la="ll -a"
@@ -22,17 +22,17 @@ alias ltr="ls -lhtr"
 alias lss="ls -lh --sort=size"
 alias lssr="ls -lhr --sort=size"
 # sudo versions
-alias sll="sls -lh"
-alias sla="sll -a"
-alias slsa="sls -a"
-alias slsd="sll -d"
-alias slsdo='sls -lha | grep --color=never "^d"'
-alias slsh='sls -A | grep "^\."'
-alias slm="sls -m"
-alias slt="sls -lht"
-alias sltr="sls -lhtr"
-alias slss="sls -lh --sort=size"
-alias slssr="sls -lhr --sort=size"
+# alias sll="sls -lh"
+# alias sla="sll -a"
+# alias slsa="sls -a"
+# alias slsd="sll -d"
+# alias slsdo='sls -lha | grep --color=never "^d"'
+# alias slsh='sls -A | grep "^\."'
+# alias slm="sls -m"
+# alias slt="sls -lht"
+# alias sltr="sls -lhtr"
+# alias slss="sls -lh --sort=size"
+# alias slssr="sls -lhr --sort=size"
 
 # MacOS doesn't have dircolors program. Have to install coreutils and symlink to gdircolors
 # NOT SURE IF THIS WORKS ELSEWHERE

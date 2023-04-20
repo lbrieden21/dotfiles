@@ -9,11 +9,11 @@ for file in ~/dotfiles/bash/{bash_prompt,path,exports,aliases,functions}; do
 done
 unset file
 
-# bash completion (***NOTE may make sense to make this load all bash completion files it finds)
+# bash completion
 if type port >/dev/null 2>/dev/null && [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
 	source /opt/local/etc/profile.d/bash_completion.sh
-elif type brew >/dev/null 2>/dev/null && [ -f "$(brew --prefix)/share/bash-completion/bash_completion" ]; then
-	source "$(brew --prefix)/share/bash-completion/bash_completion";
+elif [[ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]]; then
+	."$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
 elif [ -f /etc/bash_completion ]; then
 	 source /etc/bash_completion
 elif [ -f /etc/profile.d/bash-completion ]; then
@@ -61,3 +61,5 @@ fi
 [ -r ~/.extra ] && source ~/.extra
 
 test -e ${HOME}/.iterm2_shell_integration.bash && source ${HOME}/.iterm2_shell_integration.`basename $SHELL`
+
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
