@@ -19,6 +19,9 @@ fi
 if [ -d /opt/homebrew/bin ]; then
 	PATH="/opt/homebrew/bin:$PATH"
 fi
+if [ -d /opt/homebrew/sbin ]; then
+	PATH="/opt/homebrew/sbin:$PATH"
+fi
 if [ -d /opt/homebrew/opt/ruby/bin ]; then
 	PATH="/opt/homebrew/opt/ruby/bin:$PATH"
 fi
