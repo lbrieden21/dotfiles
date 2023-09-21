@@ -1,5 +1,3 @@
-# Add `~/bin` and '~/sbin' to the `$PATH`
-PATH="$HOME/bin:$HOME/sbin:$PATH"
 # Load the shell dotfiles, and then some:
 # * ~/.path can be used to extend `$PATH`.
 # * ~/.extra can be used for other settings you don’t want to commit.
@@ -10,12 +8,19 @@ done
 unset file
 
 # bash completion
-if type port >/dev/null 2>/dev/null && [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
+if type brew &>/dev/null; then
+	HOMEBREW_PREFIX="$(brew --prefix)"
+	if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+		source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+	else
+		for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+		  [[ -r "${COMPLETION}" ]] && source "${COMPLETION}"
+		done
+	fi
+elif type port >/dev/null 2>/dev/null && [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
 	source /opt/local/etc/profile.d/bash_completion.sh
-elif [[ -r "$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh" ]]; then
-	."$HOMEBREW_PREFIX/etc/profile.d/bash_completion.sh"
 elif [ -f /etc/bash_completion ]; then
-	 source /etc/bash_completion
+	source /etc/bash_completion
 elif [ -f /etc/profile.d/bash-completion ]; then
 	source /etc/profile.d/bash-completion
 elif [ -f /etc/profile.d/bash_completion.sh ]; then
