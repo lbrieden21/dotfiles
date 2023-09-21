@@ -1,13 +1,14 @@
-if [ -d $HOME/.composer/vendor/bin ]; then
-	PATH="$HOME/.composer/vendor/bin:$PATH"
+if [ -d /usr/local/sbin ]; then
+	PATH="/usr/local/sbin:$PATH"
 fi
 
 if [ -d /usr/sbin ]; then
 	PATH="/usr/sbin:$PATH"
 fi
 
-if [ -d /usr/local/sbin ]; then
-	PATH="/usr/local/sbin:$PATH"
+# composer
+if [ -d $HOME/.composer/vendor/bin ]; then
+	PATH="$HOME/.composer/vendor/bin:$PATH"
 fi
 
 # Macports bin directories
@@ -29,9 +30,12 @@ if [ -d /opt/homebrew/lib/ruby/gems/3.1.0/bin ]; then
 	PATH="/opt/homebrew/lib/ruby/gems/3.1.0/bin:$PATH"
 fi
 
+# Add `~/bin` and '~/sbin' to the `$PATH`
+PATH="$HOME/bin:$HOME/sbin:$PATH"
+
 # fzf bin directory
 if [ -d $HOME/.fzf/bin ]; then
-	PATH="$PATH:$HOME/.fzf/bin"
+	PATH="$HOME/.fzf/bin:$PATH"
 fi
 
 # clean up any duplicates
