@@ -91,7 +91,7 @@ alias gs='ps aux | grep [s]sh'
 alias saa='ssh-add ~/.ssh/*[dr]sa'
 alias proxy_ssh='sed -i "/^\t#ProxyCommand/s/#ProxyCommand/ProxyCommand/" ~/.ssh/config'
 alias unproxy_ssh='sed -i "/^\tProxyCommand/s/ProxyCommand/#ProxyCommand/" ~/.ssh/config'
-alias ifgnet='ifconfig | grep "inet "'
+alias ifgnet='ifconfig | grep --color=never "^[a-z][a-z0-9]*:\|inet " | grep --color=never -B1 "inet " | grep -v "^--"'
 
 # VCS
 alias svndiff='svn diff --diff-cmd=svndiff_helper'
