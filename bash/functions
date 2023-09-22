@@ -20,7 +20,9 @@ vg() {
   local file
   local line
 
-  read -r file line <<<"$(ag --nobreak --noheading $@ | fzf -0 -1 | awk -F: '{print $1, $2}')"
+  OPTIONS=$(ag --nobreak --noheading "$@" | fzf -0 -1 | awk -F: '{print $1, $2}')
+  read -r file line <<<${OPTIONS}
+  echo "FILE = ${file}, LINE = ${line}"
 
   if [[ -n $file ]]
   then
