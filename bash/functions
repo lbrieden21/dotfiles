@@ -16,24 +16,26 @@ function ghi() {
 }
 
 # fuzzy grep open via ag with line number
-vg() {
-  local file
-  local line
+if command -v ag >/dev/null; then
+  vg() {
+    local file
+    local line
 
-  OPTIONS=$(ag --nobreak --noheading "$@" | fzf -0 -1 | awk -F: '{print $1, $2}')
-  read -r file line <<<${OPTIONS}
-  echo "FILE = ${file}, LINE = ${line}"
+    OPTIONS=$(ag --nobreak --noheading "$@" | fzf -0 -1 | awk -F: '{print $1, $2}')
+    read -r file line <<<"${OPTIONS}"
+    echo "FILE = ${file}, LINE = ${line}"
 
-  if [[ -n $file ]]
-  then
-     vim $file +$line
-  fi
-}
+    if [[ -n $file ]]
+    then
+       vim $file +$line
+    fi
+  }
+fi
 
 # Find a usable agent - fixes screen and tmux
 function ssh-reagent () {
   export SSH_AUTH_SOCK=$(find /tmp/ssh-* -user `whoami` -name agent\* -printf '%T@ %p\n' 2>/dev/null | sort -k 1nr | sed 's/^[^ ]* //' | head -n 1)
-  if $(ssh-add -l > /dev/null) ; then
+  if ssh-add -l >/dev/null ; then
     echo Found working SSH Agent:
     ssh-add -l
     return
@@ -43,7 +45,7 @@ function ssh-reagent () {
 
 # count the number of open files for a user
 function ofiles() {
-  sudo lsof -u $1 | awk 'BEGIN { total = 0; } $4 ~ /^[0-9]/ { total += 1 } END { print total }'
+  sudo lsof -u "$1" | awk 'BEGIN { total = 0; } $4 ~ /^[0-9]/ { total += 1 } END { print total }'
 }
 
 # kill old user processes
