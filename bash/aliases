@@ -2,13 +2,10 @@
 # gls is macports/homebrew coreutils version of gnu ls (vs mac's bsd ls)
 if type gls >/dev/null 2>/dev/null; then
 	alias ls="gls -F --color --group-directories-first"
-	# alias sls="sudo gls -F --color --group-directories-first"
 elif ! ls --group-directories-first > /dev/null 2> /dev/null ; then
 	alias ls="ls --color"
-	# alias sls="sudo ls --color"
 else
 	alias ls="ls -F --color"
-	# alias sls="sudo ls -F --color"
 fi
 alias ll="ls -lh"
 alias la="ll -a"
@@ -21,18 +18,6 @@ alias lt="ls -lht"
 alias ltr="ls -lhtr"
 alias lss="ls -lh --sort=size"
 alias lssr="ls -lhr --sort=size"
-# sudo versions
-# alias sll="sls -lh"
-# alias sla="sll -a"
-# alias slsa="sls -a"
-# alias slsd="sll -d"
-# alias slsdo='sls -lha | grep --color=never "^d"'
-# alias slsh='sls -A | grep "^\."'
-# alias slm="sls -m"
-# alias slt="sls -lht"
-# alias sltr="sls -lhtr"
-# alias slss="sls -lh --sort=size"
-# alias slssr="sls -lhr --sort=size"
 
 # MacOS doesn't have dircolors program. Have to install coreutils and symlink to gdircolors
 # NOT SURE IF THIS WORKS ELSEWHERE
@@ -44,13 +29,6 @@ fi
 
 # directories
 alias cdd='cd -'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias d='dirs -p'
-alias cdn='pushd'
-alias cdp='popd'
 
 alias df="df -h"
 alias du="du -h"
@@ -66,28 +44,25 @@ alias lvim='vim -c "normal '\''0"'
 alias lmvim='mvim -c "normal '\''0"'
 alias svim='sudo vim'
 alias sview='sudo vim -R'
-alias vf='vim $(fzf)'
-alias vfp='vim $(fzf --preview "head -100 {}")'
-alias mf='mvim $(fzf)'
-alias mfp='mvim $(fzf --preview "head -100 {}")'
 alias ubvim='/usr/bin/vim'
+# vim if aliases if fzf is installed
+if command -v fzf > /dev/null; then
+	alias vf='vim $(fzf)'
+	alias vfp='vim $(fzf --preview "head -100 {}")'
+	alias mf='mvim $(fzf)'
+	alias mfp='mvim $(fzf --preview "head -100 {}")'
+fi
 
 # clean vim swp files (shouldn't be a problem with current centralized storage)
 alias clnswp='find . -name .*.sw[mnop] -type f -delete'
 
 # quick source/edit various configs
 alias sb='source ~/.bash_profile'
-alias edba='vim ~/dotfiles/bash/{bash_profile,aliases,exports,functions,path,bash_prompt}'
 alias ev='vim ~/dotfiles/vim/vimrc'
-alias et='vim ~/.tmux.conf'
-
-# find running processes
-alias psg="ps auxww | grep -v grep | grep "
-alias psgi="ps auxww | grep -v grep | grep -i "
 
 alias grep='grep --color'
-alias gphpdoc="grep -E '^\s*/?\*+'"
-alias gs='ps aux | grep [s]sh'
+alias psg="ps auxww | grep -v grep | grep "
+alias psgi="ps auxww | grep -v grep | grep -i "
 alias saa='ssh-add ~/.ssh/*[dr]sa'
 alias proxy_ssh='sed -i".bak" "/^\t#ProxyCommand/s/#ProxyCommand/ProxyCommand/" ~/.ssh/config'
 alias unproxy_ssh='sed -i".bak" "/^\tProxyCommand/s/ProxyCommand/#ProxyCommand/" ~/.ssh/config'
@@ -102,20 +77,18 @@ alias svndiff='svn diff --diff-cmd=svndiff_helper'
 #alias disscsh='pkill -KILL -f ssh.*-fND.*10132.*lbrieden@scsh01.alchemysystems.com'
 
 # MacOS
-alias showAllFilesY='defaults write com.apple.finder AppleShowAllFiles YES'
-alias showAllFilesN='defaults write com.apple.finder AppleShowAllFiles NO'
-alias flushdnscache="sudo dscacheutil -flushcache ; sudo killall -HUP mDNSResponder"
-# clean files mac shits out everywhere
-alias clnmac="find . -name '*.DS_Store' -type f -delete"
+if [ uname == "Darwin" ]; then
+	alias showAllFilesY='defaults write com.apple.finder AppleShowAllFiles YES'
+	alias showAllFilesN='defaults write com.apple.finder AppleShowAllFiles NO'
+	alias flushdnscache="sudo dscacheutil -flushcache ; sudo killall -HUP mDNSResponder"
+	# clean files mac shits out everywhere
+	alias clnmac="find . -name '*.DS_Store' -type f -delete"
+fi
 
 # apache stats (apache-status module must be installed)
 alias webps="sudo service apache fullstatus | grep '^ *[0-9]' | grep -v -E '( \. | \_ )'"
 alias webpss="webps | awk '{ if (\$6 <= 3600) print \$0 ; }'"
 alias webpslong="webps | awk '{ if (\$6 >= 3600) print \$0 ; }'"
 
-# pull in latest varops changes on production servers
-alias vup="sudo su - ops -c 'cd /var/ops/.varops ; git pull'"
-
 # AWS
-alias svls="serverless"
 alias cdk="npx aws-cdk"
