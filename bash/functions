@@ -71,3 +71,13 @@ jwtd() {
          echo "Signature: $(echo "${1}" | awk -F'.' '{print $3}')"
     fi
 }
+
+# Convert hostname to mac address
+hostname_to_macaddress() {
+  local H
+  H=$(hostname)
+  if [ -n "$1" ]; then
+    H="$1"
+  fi
+  echo "$H" | md5sum | sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/'
+}
