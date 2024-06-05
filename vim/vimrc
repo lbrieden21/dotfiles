@@ -332,22 +332,26 @@ Plug 'janko-m/vim-test'
 " Bbye allows you to do delete buffers (close files) without closing your windows or messing up your layout.
 Plug 'moll/vim-bbye'
 
-" Plugins to load on OS X only
-if has("unix")
-  let s:uname = system("uname -s")
-  if s:uname == "Darwin\n"
-    " Suggestion and Tab completion
-    " Requires a locally-compiled library; see docs. Note this will work
-    " fine on Linux, but disabling there since we mostly code on OS X and it
-    " can be a hassle to compile the dependent libraries.
-    " https://github.com/Valloric/YouCompleteMe
-    "Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-    Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
-    " set breakpoints to be able to debug vim plugins
-    "Plug 'vim-scripts/genutils'
-    "Plug 'albfan/vim-breakpts'
-  endif
+" Plugins to load on lance-2022 MacOS laptop
+let s:hname = system("hostname -s")
+if s:hname == "lance-2022\n"
+  " Suggestion and Tab completion
+  " Requires a locally-compiled library; see docs. Note this will work
+  " fine on Linux, but disabling there since we mostly code on OS X and it
+  " can be a hassle to compile the dependent libraries.
+  " https://github.com/Valloric/YouCompleteMe
+  "Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+  Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
+  " set breakpoints to be able to debug vim plugins
+  "Plug 'vim-scripts/genutils'
+  "Plug 'albfan/vim-breakpts'
+endif
+" Plugins to load on lance-2022 or server1
+if s:hname == "lance-2022\n" || s:hname == "server1\n"
+  " Integrates ChatGPT
+  " https://github.com/CoderCookE/vim-chatgpt
+  Plug 'CoderCookE/vim-chatgpt'
 endif
 
 call plug#end()
@@ -1111,23 +1115,33 @@ nnoremap <leader>tv :TestVisit<CR>
 " Toggle numbers
 nmap <leader>n :setlocal number!<CR><bar>:setlocal relativenumber!<CR>
 
-" Mac OS X-only mappings
-if has("unix")
-  let s:uname = system("uname -s")
-  if s:uname == "Darwin\n"
-    " Set clipboard to system clipboard
-    set clipboard=unnamed
-    " Search for word under cursor in Dash.app
-    nmap <leader>d <Plug>DashSearch
-    nmap <leader>D <Plug>DashGlobalSearch
+" lance-2022 Mac laptop mappings
+" s:hname is set above in the plugin's section
+if s:hname == "lance-2022\n"
+  " Set clipboard to system clipboard
+  set clipboard=unnamed
+  " Search for word under cursor in Dash.app
+  nmap <leader>d <Plug>DashSearch
+  nmap <leader>D <Plug>DashGlobalSearch
 
-    " Use Marked.app to preview Markdown files...
-    " http://stackoverflow.com/questions/9212340/is-there-a-vim-plugin-for-preview-markdown-file
-    function! s:setupMarkup()
-      nmap <leader>M :silent !open -a Marked.app '%:p'<CR>:redraw!<CR>
-    endfunction
-    autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
-  endif
+  " Use Marked.app to preview Markdown files...
+  " http://stackoverflow.com/questions/9212340/is-there-a-vim-plugin-for-preview-markdown-file
+  function! s:setupMarkup()
+    nmap <leader>M :silent !open -a Marked.app '%:p'<CR>:redraw!<CR>
+  endfunction
+  autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
+endif
+
+" lance-2022 and server1 vim-chatgpt plugin configuration
+if s:hname == "lance-2022\n" || s:hname == "server1\n"
+  " vim-chatgpt config
+  " let g:chat_gpt_max_tokens=2000
+  let g:chat_gpt_model='gpt-3.5-turbo'
+  " let g:chat_gpt_session_mode=1
+  " let g:chat_gpt_temperature = 0.7
+  let g:chat_gpt_lang = 'English'
+  let g:chat_gpt_split_direction = 'vertical'
+  let g:split_ratio=2
 endif
 
 " Open new vertical split
