@@ -77,7 +77,7 @@ alias svndiff='svn diff --diff-cmd=svndiff_helper'
 #alias disscsh='pkill -KILL -f ssh.*-fND.*10132.*lbrieden@scsh01.alchemysystems.com'
 
 # MacOS
-if [ uname == "Darwin" ]; then
+if [ `uname` == "Darwin" ]; then
 	alias showAllFilesY='defaults write com.apple.finder AppleShowAllFiles YES'
 	alias showAllFilesN='defaults write com.apple.finder AppleShowAllFiles NO'
 	alias flushdnscache="sudo dscacheutil -flushcache ; sudo killall -HUP mDNSResponder"
