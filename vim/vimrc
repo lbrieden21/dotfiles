@@ -1242,4 +1242,7 @@ autocmd User fugitive
 " HACK to make ale only use phpcs when in ETS clean directories
 " au BufNewFile,BufRead */templates/*.php set g:ale_php_phpcs_standard=path/to/rules.xml
 
+" Generate a random password
+command! -nargs=1 GeneratePassword execute ":r !openssl rand -base64 48 | tr -d '*/\\\\_-' | cut -c1-<args>"
+
 " vim:set ft=vim et sw=2:
