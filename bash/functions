@@ -57,7 +57,7 @@ function swapuse() {
   for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 " " $3}END{ print ""}' $file; done | sort -k 2 -n -r | less
 }
 
-if [[ $HOSTNAME = 'server1' ]]; then
+if [[ $HOSTNAME = "server1" || $HOSTNAME = "vm-nas" ]]; then
 	function mediaPermissions() {
 		sudo chown -R media.media $1
 		sudo chmod -R ug=rwX,o-rwx $1
