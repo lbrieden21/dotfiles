@@ -81,3 +81,22 @@ hostname_to_macaddress() {
   fi
   echo "$H" | md5sum | sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/'
 }
+
+# Replicate gnu watch command on freebsd systems
+if [ "$(uname -s)" = "FreeBSD" ]; then
+  watch() {
+    local interval=2
+    if [ "$1" = "-n" ]; then
+      interval=$2
+      shift 2
+    fi
+    while :; do
+      clear
+      echo "Every ${interval}s: $*"
+      echo "---------------------------"
+      "$@"
+      sleep "$interval"
+    done
+  }
+fi
+
