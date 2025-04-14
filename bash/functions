@@ -86,15 +86,128 @@ hostname_to_macaddress() {
 if [ "$(uname -s)" = "FreeBSD" ]; then
   watch() {
     local interval=2
-    if [ "$1" = "-n" ]; then
-      interval=$2
-      shift 2
-    fi
+    local diff_mode=0
+    local cumulative=0
+    local has_previous=0
+
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        -n) interval="$2"; shift 2 ;;
+        # Diff and cumulative mode still don't work quite correctly so disabling them for now
+        # -d) diff_mode=1; shift ;;
+        # -c) diff_mode=1; cumulative=1; shift ;;
+        --) shift; break ;;
+        *) break ;;
+      esac
+    done
+
+    local cmd=("$@")
+    local tmp_old="$(mktemp -t watch_old)"
+    local tmp_new="$(mktemp -t watch_new)"
+    local tmp_cum="$(mktemp -t watch_cum)"
+    trap 'rm -f "$tmp_old" "$tmp_new" "$tmp_cum"; tput cnorm' EXIT
+
+    : > "$tmp_old"
+    : > "$tmp_cum"
+
+    # Highlight changed characters between files line-by-line
+    highlight_diffs() {
+      local old="$1" new="$2"
+      local output_buffer=""
+      local i=0
+
+      while IFS= read -r new_line && [ "$i" -lt "$body_lines" ]; do
+        IFS= read -r old_line <&3 || old_line=""
+        local out_line=""
+        local j=0
+        local len_new="${#new_line}"
+        local len_old="${#old_line}"
+        local max_len=$(( len_new > len_old ? len_new : len_old ))
+
+        while [ "$j" -lt "$max_len" ]; do
+          local char_new="${new_line:$j:1}"
+          local char_old="${old_line:$j:1}"
+          if [ "$char_new" != "$char_old" ]; then
+            out_line+=$'\033[7m'"${char_new:- }"$'\033[0m'
+          else
+            out_line+="${char_new:- }"
+          fi
+          j=$((j + 1))
+        done
+
+        # Ensure reset at end of line to avoid highlight leakage
+        if [[ "$out_line" != *$'\033[0m' ]]; then
+          # out_line+=$'\033[0m'
+          out_line+=" "$'\033[0m'
+        fi
+        output_buffer+="${out_line}"$'\n'
+        i=$((i + 1))
+      done 3<"$old" <"$new"
+
+      printf "%s" "$output_buffer"
+    }
+
+    # Pad ANSI-colored lines to terminal width
+    pad_line_to_width() {
+      local raw_line="$1"
+      local visible_len stripped
+      stripped=$(printf "%s" "$raw_line" | sed -E 's/\x1B\[[0-9;]*[mK]//g')
+      visible_len=${#stripped}
+
+      if [ "$visible_len" -lt "$term_cols" ]; then
+        local pad=$((term_cols - visible_len))
+        printf "%s%*s\n" "$raw_line" "$pad" ""
+      else
+        printf "%s\n" "$raw_line"
+      fi
+    }
+
     while :; do
-      clear
-      echo "Every ${interval}s: $*"
-      echo "---------------------------"
-      "$@"
+      local term_lines term_cols header_lines body_lines
+      term_lines=$(tput lines)
+      term_cols=$(tput cols)
+      header_lines=3
+      body_lines=$((term_lines - header_lines))
+
+      tput civis
+      printf "\033[H"
+
+      local now
+      now="$(date '+%Y-%m-%d %H:%M:%S')"
+      printf "%-${term_cols}s\n" "Every ${interval}s: ${cmd[*]}    $now"
+      printf "%-${term_cols}s\n" "----------------------------------------------------"
+
+      "${cmd[@]}" > "$tmp_new" 2>&1
+      head -n "$body_lines" "$tmp_new" > "$tmp_new.body"
+
+      local body_output
+      if [ "$diff_mode" -eq 1 ]; then
+        if [ "$has_previous" -eq 1 ]; then
+          if [ "$cumulative" -eq 1 ]; then
+            body_output=$(highlight_diffs "$tmp_cum" "$tmp_new.body")
+            cp "$tmp_new.body" "$tmp_cum"
+          else
+            body_output=$(highlight_diffs "$tmp_old" "$tmp_new.body")
+            cp "$tmp_new.body" "$tmp_old"
+          fi
+        else
+          body_output=$(cat "$tmp_new.body")
+          if [ "$cumulative" -eq 1 ]; then
+            cp "$tmp_new.body" "$tmp_cum"
+          else
+            cp "$tmp_new.body" "$tmp_old"
+          fi
+          has_previous=1
+        fi
+      else
+        body_output=$(cat "$tmp_new.body")
+      fi
+
+      IFS=$'\n' read -rd '' -a lines <<< "$body_output"
+      for ((i = 0; i < body_lines; i++)); do
+        pad_line_to_width "${lines[i]}"
+      done
+
       sleep "$interval"
     done
   }
