@@ -151,8 +151,8 @@ EIGHTBIT 1
 NORMAL 00
 # normal file
 FILE 00
-# directory
-DIR 34
+# directory - default of 34 is just too dark here
+DIR 94
 # 777 directory
 OTHER_WRITABLE 34;40
 # symbolic link
