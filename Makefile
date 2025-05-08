@@ -3,15 +3,31 @@ DIR=~/dotfiles
 all: symlinks install_vimplug install_fzf
 
 symlinks:
-	@ln -sf $(DIR)/bash/bash_profile ~/.bash_profile
-	@ln -sf $(DIR)/bash/inputrc ~/.inputrc
-	@ln -nsf $(DIR)/vim/vim ~/.vim
-	@ln -sf $(DIR)/vim/vimrc ~/.vimrc
-	@ln -sf $(DIR)/git/gitconfig ~/.gitconfig
-	@ln -sf $(DIR)/git/gitignore_global ~/.gitignore_global
-	@ln -sf $(DIR)/.screenrc ~/.screenrc
-	@ln -sf $(DIR)/.tmux.conf ~/.tmux.conf
-	@ln -sf $(DIR)/bin ~/bin
+	@for file in bash/bash_profile bash/inputrc vim/vim vim/vimrc git/gitconfig git/gitignore_global .screenrc .tmux.conf bin; do \
+		dest="$${file##*/}"; \
+		# Remove extra dot if already present in the file name \
+		first_char=$$(expr substr "$$dest" 1 1); \
+		if [ "$$first_char" = "." ]; then \
+			target="$$dest"; \
+		else \
+			target=".$$dest"; \
+		fi; \
+		# Check if the destination exists and is not already a correct symlink \
+		if [ -L "$$HOME/$$target" ] && [ "$$(readlink $$HOME/$$target)" = "$(DIR)/$$file" ]; then \
+			echo "Symlink for $$HOME/$$target already correctly set, skipping."; \
+			continue; \
+		elif [ -e "$$HOME/$$target" ]; then \
+			echo "Backing up existing $$HOME/$$target to $$HOME/$$target.bak"; \
+			mv -v "$$HOME/$$target" "$$HOME/$$target.bak"; \
+		fi; \
+		# Check if it is a directory \
+		if [ "$$file" = "vim/vim" ] || [ "$$file" = "bin" ]; then \
+			ln -nsf "$(DIR)/$$file" "$$HOME/$$target"; \
+		else \
+			ln -sf "$(DIR)/$$file" "$$HOME/$$target"; \
+		fi; \
+		echo "Created symlink for $$HOME/$$target -> $(DIR)/$$file"; \
+	done
 
 install_vimplug:
 	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
