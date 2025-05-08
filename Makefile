@@ -1,13 +1,14 @@
-DIR=~/dotfiles
+DIR=$(HOME)/dotfiles
 
 all: symlinks install_vimplug install_fzf
 
 symlinks:
 	@for file in bash/bash_profile bash/inputrc vim/vim vim/vimrc git/gitconfig git/gitignore_global .screenrc .tmux.conf bin; do \
 		dest="$${file##*/}"; \
-		# Remove extra dot if already present in the file name \
-		first_char=$$(expr substr "$$dest" 1 1); \
-		if [ "$$first_char" = "." ]; then \
+		# Special case for bin directory to avoid leading dot \
+		if [ "$$dest" = "bin" ]; then \
+			target="$$dest"; \
+		elif [ "$$(expr substr "$$dest" 1 1)" = "." ]; then \
 			target="$$dest"; \
 		else \
 			target=".$$dest"; \
@@ -42,3 +43,4 @@ gitTools:
 install_fzf:
 	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 	~/.fzf/install
+
