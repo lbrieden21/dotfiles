@@ -342,7 +342,16 @@ if s:hname == "lance-2022\n"
   " https://github.com/Valloric/YouCompleteMe
   "Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
   Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
+  "Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
+  Plug 'Valloric/YouCompleteMe', { 'do': 'env CC=/opt/homebrew/opt/llvm/bin/clang CXX=/opt/homebrew/opt/llvm/bin/clang++ LDFLAGS=-L/opt/homebrew/opt/llvm/lib CPPFLAGS=-I/opt/homebrew/opt/llvm/include MACOSX_DEPLOYMENT_TARGET=11.0 ./install.py --tern-completer' }
+
+  " This plugin adds Copilot-like code completion support to Vim. It uses Ollama
+  " as a backend, which can run locally and does not require cloud services,
+  " thus preserving your privacy.
+  " https://github.com/gergap/vim-ollama
+  " Plug 'gergap/vim-ollama'
+
+
   " set breakpoints to be able to debug vim plugins
   "Plug 'vim-scripts/genutils'
   "Plug 'albfan/vim-breakpts'
