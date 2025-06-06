@@ -57,7 +57,7 @@ function swapuse() {
   for file in /proc/*/status ; do awk '/VmSwap|Name/{printf $2 " " $3}END{ print ""}' $file; done | sort -k 2 -n -r | less
 }
 
-if [[ $HOSTNAME = "server1" || $HOSTNAME = "vm-nas" ]]; then
+if [[ $HOSTNAME = "server1" || $HOSTNAME = "lxc-nas" ]]; then
 	function mediaPermissions() {
 		sudo chown -R media.media $1
 		sudo chmod -R ug=rwX,o-rwx $1
@@ -81,3 +81,51 @@ hostname_to_macaddress() {
   fi
   echo "$H" | md5sum | sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/'
 }
+
+# Enable only if ncat or socat exists (clamdscan local won't work with remote server)
+if command -v ncat >/dev/null 2>&1; then
+  wget_and_scan() {
+    local url="$1"
+    local scanner_host="192.168.8.119"  # replace with your lxc-scanner IP
+    local scanner_port=3310
+
+    if [[ -z "$url" ]]; then
+      echo "Usage: wget_and_scan <url>"
+      return 1
+    fi
+
+    local filename
+    filename=$(basename "${url}")
+    local tmpfile
+    tmpfile=$(mktemp /tmp/wgetscan.XXXXXX)
+
+    echo "[*] Downloading: $url"
+    if ! wget -q -O "$tmpfile" "$url"; then
+      echo "[!] Failed to download file."
+      rm -f "$tmpfile"
+      return 2
+    fi
+
+    echo "[*] Scanning with remote clamd at $scanner_host:$scanner_port..."
+    (
+      printf 'zINSTREAM\n'
+      dd if="$tmpfile" bs=1024 2>/dev/null | while read -r -n 8192 chunk; do
+        printf "$(printf '%08x' ${#chunk})"
+        printf "%s" "$chunk"
+      done
+      printf '00000000'
+    ) | ncat "$scanner_host" "$scanner_port" > /tmp/wgetscan.result
+
+    if grep -q "FOUND" /tmp/wgetscan.result; then
+      echo "[!] Virus detected — file will not be saved."
+      rm -f "$tmpfile" /tmp/wgetscan.result
+      return 3
+    fi
+
+    echo "[+] File clean. Saving as: $filename"
+    mv "$tmpfile" "./$filename"
+    rm -f /tmp/wgetscan.result
+  }
+else
+  echo "ncat not found — wget_and_scan() disabled"
+fi
