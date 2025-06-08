@@ -231,7 +231,7 @@ if command -v perl >/dev/null 2>&1; then
     resultfile=$(mktemp /tmp/clamdresult.XXXXXX)
 
     echo "[*] Downloading: $url"
-    if ! wget -q -O "$tmpfile" "$url"; then
+    if ! wget -q --show-progress -O "$tmpfile" "$url"; then
       echo "[!] Failed to download file."
       rm -f "$tmpfile" "$resultfile"
       return 2
