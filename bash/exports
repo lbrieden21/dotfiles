@@ -30,8 +30,3 @@ export HISTCONTROL=ignoredups
 # Don’t clear the screen after quitting a manual page
 export MANPAGER="less -X"
 
-# FIXME this really should be machine/system vs hostname based
-if [[ $HOSTNAME = 'server1' || $HOSTNAME = 'MediaPlayer1' ]]; then
-	export TERM='xterm'
-	export COLORTERM='gnome-256color'
-fi
