@@ -5,7 +5,6 @@ all: symlinks install_vimplug install_fzf
 symlinks:
 	@for file in bash/bash_profile bash/inputrc vim/vim vim/vimrc git/gitconfig git/gitignore_global .screenrc .tmux.conf bin; do \
 		dest="$${file##*/}"; \
-		# Special case for bin directory to avoid leading dot \
 		if [ "$$dest" = "bin" ]; then \
 			target="$$dest"; \
 		elif [ "$$(expr substr "$$dest" 1 1)" = "." ]; then \
@@ -13,7 +12,6 @@ symlinks:
 		else \
 			target=".$$dest"; \
 		fi; \
-		# Check if the destination exists and is not already a correct symlink \
 		if [ -L "$$HOME/$$target" ] && [ "$$(readlink $$HOME/$$target)" = "$(DIR)/$$file" ]; then \
 			echo "Symlink for $$HOME/$$target already correctly set, skipping."; \
 			continue; \
@@ -21,7 +19,6 @@ symlinks:
 			echo "Backing up existing $$HOME/$$target to $$HOME/$$target.bak"; \
 			mv -v "$$HOME/$$target" "$$HOME/$$target.bak"; \
 		fi; \
-		# Check if it is a directory \
 		if [ "$$file" = "vim/vim" ] || [ "$$file" = "bin" ]; then \
 			ln -nsf "$(DIR)/$$file" "$$HOME/$$target"; \
 		else \
@@ -44,3 +41,12 @@ install_fzf:
 	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 	~/.fzf/install
 
+set_locale:
+	@set -e; \
+	if [ "$$(locale 2>/dev/null | awk -F= '/^LANG=/{print $$2}' | tr -d '"')" = "en_US.UTF-8" ]; then \
+		echo "Locale already set (LANG=en_US.UTF-8); nothing to do."; \
+	else \
+		sudo sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen; \
+		sudo locale-gen; \
+		sudo update-locale LANG=en_US.UTF-8; \
+	fi
