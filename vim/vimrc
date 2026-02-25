@@ -1,6 +1,5 @@
 " NOTE: SETTINGS IN THIS FILE ARE HEAVILY RIPPED OFF FROM THE DP
 " lots used from https://github.com/rdlugosz/dotfiles/blob/master/vimrc
-set nocompatible		" be iMproved
 
 " Plugins
 call plug#begin('~/.vim/plugged')
@@ -38,27 +37,8 @@ Plug 'tpope/vim-unimpaired'
 Plug 'vim-scripts/scratch.vim'
 
 " Autoclose brackets
-"Plug 'MartinLafreniere/vim-PairTools'
-" Can't for the life of me get vim-PairTools to work when ft = javascript.jsx,
-" the period seems to throw it off. For now installing auto-pairs to be used
-" specifically for javascript.jsx filetype. At some point may want to look
-" into completely switching to auto-pairs if its an acceptable replacement
-"Plug 'jiangmiao/auto-pairs', { 'for': 'javascript.jsx' }
-Plug 'jiangmiao/auto-pairs'
-
-" CtrlP.vim is a fuzzy file, buffer, mru, tag, etc finder.
-" Open with CTRL-P, then:
-"   Press <c-f> and <c-b> to cycle between modes.
-"   Press <c-d> to switch to filename only search instead of full path.
-"   Press <c-r> to switch to regexp mode.
-" https://github.com/ctrlpvim/ctrlp.vim
-" Plug 'ctrlpvim/ctrlp.vim'
-
-" An extension to ctrlp.vim for deleting open buffers
-" Plug 'j5shi/ctrlp_bdelete.vim'
-
-" ctrlp-funky adds function navigation to ctrlp
-" Plug 'tacahiroy/ctrlp-funky'
+" https://github.com/LunarWatcher/auto-pairs (maintained fork of jiangmiao/auto-pairs)
+Plug 'LunarWatcher/auto-pairs'
 
 " FZF (replaces Ctrl-P, FuzzyFinder and Command-T)
 Plug '~/.fzf'
@@ -85,10 +65,10 @@ Plug 'michaeljsmith/vim-indent-object'
 
 if version >= 800
   " Asynchronous Lint Engine
-  " https://github.com/w0rp/ale
+  " https://github.com/dense-analysis/ale
   " ALE (Asynchronous Lint Engine) is a plugin for providing linting in NeoVim
   " and Vim 8 while you edit your text files.
-  Plug 'w0rp/ale'
+  Plug 'dense-analysis/ale'
   Plug 'skaji/syntax-check-perl'
 else
   " Syntax checker for many languages
@@ -110,10 +90,6 @@ Plug 'rizzatti/dash.vim'
 " Ag, Ack and Grep depending on what's available.
 " https://github.com/rizzatti/greper.vim
 " Plug 'rizzatti/greper.vim'
-
-" This is a dependency of Dash.vim and Grepper.vim
-" https://github.com/rizzatti/funcoo.vim
-Plug 'rizzatti/funcoo.vim'
 
 if (has('python') || has('python3')) && version >= 704
   " UltiSnips - The ultimate snippet solution for Vim.
@@ -145,9 +121,6 @@ Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-rhubarb'
 
 " show multipanes when editing a COMMIT_EDITMSG
 Plug 'rhysd/committia.vim'
-
-" Extended % matching for HTML and other languages
-Plug 'vim-scripts/matchit.zip'
 
 " Better visual star searching
 Plug 'bronson/vim-visual-star-search'
@@ -201,19 +174,6 @@ Plug 'jeetsukumaran/vim-pythonsense'
 " https://github.com/moll/vim-node
 Plug 'moll/vim-node', { 'for': ['javascript', 'javascript.jsx'] }
 
-" PREVIOUS JS PACKAGES START
-" " Javascript Syntax Support
-" Plug 'elzr/vim-json', { 'for': 'json' }
-" " Plug 'pangloss/vim-javascript', { 'for': ['javascript', 'javascript.jsx']  }" Javascript Syntax
-" Plug 'othree/yajs.vim', { 'for': ['javascript', 'javascript.jsx']  }" Javascript Syntax
-" Plug 'gavocanov/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] } " Javascript Indenting
-" Plug 'mxw/vim-jsx', { 'for': ['javascript', 'javascript.jsx'] } " JSX Support for React
-" Plug 'heavenshell/vim-jsdoc', { 'for': ['javascript', 'javascript.jsx'] } "JSDoc suto-snippets
-" Plug 'othree/javascript-libraries-syntax.vim', { 'for': ['javascript', 'javascript.jsx'] } " Extras for javascript Libraries
-" PREVIOUS JS PACKAGES CONFIG END
-
-" NEW JS PACKAGES CONFIG START
-" javascript support still a little iffy, trying variations
 " Javascript Syntax Support
 Plug 'elzr/vim-json'
 
@@ -222,35 +182,17 @@ Plug 'Quramy/tsuquyomi'
 Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
 
-let s:js_mode = 'othree'
-if s:js_mode ==# 'pangloss'
-  " PANGLOSS MODE
-  " 1.  Preferring pangloss for now since I like the included indentexpr
-  "     it also has a node ftdetect, but that is the same as in
-  "     moll/vim-node
-  " 2.  After syntax, ftplugin, indent for JSX
-  Plug 'pangloss/vim-javascript'
-        \| Plug 'mxw/vim-jsx'
-  let g:javascript_plugin_jsdoc = 1
+" Javascript / JSX syntax
+" pangloss/vim-javascript is actively maintained with built-in JSX support
+" https://github.com/pangloss/vim-javascript
+Plug 'pangloss/vim-javascript'
+" https://github.com/MaxMellon/vim-jsx-pretty
+Plug 'MaxMellon/vim-jsx-pretty'
+let g:javascript_plugin_jsdoc = 1
 
-elseif s:js_mode ==# 'othree'
-  " YAJS MODE
-  " 1.  yajs.vim highlighting is a little more robust than the pangloss one.
-  " 2.  The libraries syntax adds unique highlighting for
-  "     jQuery,backbone,etc. and I've confirmed it is only compatible with
-  "     yajs.vim as of 2016-11-03.
-  " 3.  es.next support has possible jsx indent conflicts
-  "     @see https://github.com/othree/es.next.syntax.vim/issues/5
-  Plug 'othree/yajs.vim'
-        \| Plug 'othree/javascript-libraries-syntax.vim'
-        \| Plug 'othree/es.next.syntax.vim'
-        \| Plug 'mxw/vim-jsx'
-endif
-
-Plug 'gavocanov/vim-js-indent', { 'for': ['javascript', 'javascript.jsx'] } " Javascript Indenting
+" JSDoc auto-snippets
 " <leader>pd on function to insert jsdoc above
-Plug 'heavenshell/vim-jsdoc' "JSDoc suto-snippets
-" NEW JS PACKAGES CONFIG END
+Plug 'heavenshell/vim-jsdoc'
 
 " PHP Syntax Supoort
 " https://github.com/StanAngeloff/php.vim
@@ -365,19 +307,10 @@ endif
 
 call plug#end()
 
-" Enable file type detection.
-filetype plugin indent on	" required!
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " SETTINGS
 " tpope/vim-sensible is inlined here & used as a baseline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has('autocmd')
-  filetype plugin indent on
-endif
-if has('syntax') && !exists('g:syntax_on')
-  syntax enable     " enable syntax processing
-endif
 
 " Turn on font that will work with powerline on macvim. At this point not sure
 " why necessary
@@ -396,9 +329,8 @@ if has("gui_macvim")
   let g:AutoPairsShortcutBackInsert = '∫' " <m-b>
 endif
 
-set smartindent     " make indenting better
 set autoindent		" preserve indent level on newlines
-set noexpandtab		" use spaces, not tabs
+set noexpandtab		" use tabs, not spaces
 set tabstop=4		" a tab is 4 spaces
 set shiftwidth=4	" an autoindent (with <<) is 4 spaces
 set softtabstop=4	" tabwidth in insert mode
@@ -467,7 +399,6 @@ if has('path_extra')
 endif
 
 set autoread 			" reload unchanged buffers when file changed outside vim
-set fileformats+=mac	" should already be the default when compiled on mac
 
 " remember more than 20 previous search/commands
 if &history < 1000
@@ -493,10 +424,13 @@ set viminfo=!,'100,<1000,s100,h
 
 set sessionoptions-=options " exclude options from the :mksession command
 
-" Load matchit.vim, but only if the user hasn't installed a newer version.
-" Makes the % command jump to matching HTML tags, if/else/endif in Vim scripts, etc.
-if !exists('g:loaded_matchit') && findfile('plugin/matchit.vim', &rtp) ==# ''
-  runtime! macros/matchit.vim
+" Load matchit.vim for extended % matching (HTML tags, if/else/endif, etc.)
+if !exists('g:loaded_matchit')
+  if has('packages')
+    silent! packadd matchit
+  else
+    runtime! macros/matchit.vim
+  endif
 endif
 
 " Set colorscheme
@@ -508,21 +442,25 @@ if $TERM =~ "-256color"
   set t_Co=256
 endif
 set background=dark
+silent! colorscheme gruvbox
+let g:airline_theme='gruvbox'
 " silent! colorscheme solarized
-" let g:airline_theme='solarized'		" Colors for vim-airline
+" let g:airline_theme='solarized'
 " silent! colorscheme monokai
 " let g:airline_theme='molokai'
 " silent! colorscheme OceanicNext
 " let g:airline_theme='oceanicnext'
-silent! colorscheme gruvbox
-let g:airline_theme='gruvbox'
 " silent! colorscheme badwolf
 " let g:airline_theme='badwolf'
 " silent! colorscheme wombat
 " let g:airline_theme='wombat'
 
 " Allow gx to open urls in the browser
-let g:netrw_browsex_viewer = 'open'
+if has('mac')
+  let g:netrw_browsex_viewer = 'open'
+else
+  let g:netrw_browsex_viewer = 'xdg-open'
+endif
 
 " Centralize backups, swapfiles and undo history
 set swapfile
@@ -584,14 +522,9 @@ set wildignore+=*/tmp/*,*/node_modules/*
 set mouse=a
 
 " change the cursor shape depending on mode
-" see: http://vim.wikia.com/wiki/Change_cursor_shape_in_different_modes
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-else
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
-endif
+" Uses standard DECSCUSR escape sequences (works across modern terminals)
+let &t_SI = "\e[6 q"
+let &t_EI = "\e[2 q"
 
 " highlight current line
 "set cursorline
@@ -606,12 +539,6 @@ set synmaxcol=800
 
 " Vim-session Config
 let g:session_autosave = 'no'
-" let g:session_autosave = 'yes'
-" let g:session_autosave_to = 'default'
-" let g:session_autosave_periodic = 5
-" let g:session_autosave_silent = 1
-" let g:session_verbose_messages = 1
-" let g:session_autoload = 'yes'
 
 " vim-pydocstring Config to change activation key to <C-d>
 nmap <silent> <C-s> <Plug>(pydocstring)
@@ -695,42 +622,6 @@ let g:EditorConfig_exclude_patterns = ['fugitive://.*']
 " JSDoc config
 let g:jsdoc_enable_es6 = 1
 
-" vim-jsx config
-let g:jsx_ext_required = 0
-
-" ctrlp config
-" let g:ctrlp_map = '<Leader>t'
-" let g:ctrlp_working_path_mode = 'w'
-"let g:ctrlp_custom_ignore = {
-"	\ 'dir':  '\v[\/]\.(git|hg|svn)$|[\/]node_modules',
-"	\ 'file': '\v\.(exe|so|dll)$',
-"	\ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
-"	\ }
-""let g:ctrlp_custom_ignore = '\v\~$|\.(o|swp|pyc|wav|mp3|ogg|blend)$|(^|[/\\])\.(hg|git|bzr|svn)($|[/\\])|__init__\.py|*node_modules*'
-"let g:ctrlp_show_hidden = 0
-"let g:ctrlp_switch_buffer = 0
-"let g:ctrlp_clear_cache_on_exit = 0
-"" Use The Silver Searcher if available
-"if executable('ag')
-"	" Use ag in CtrlP
-"	let g:ctrlp_user_command = 'ag %s -l --nocolor --ignore node_modules --ignore vendor --ignore logs --ignore _output --ignore ciJReports --ignore *.map --ignore *.sql --hidden -g "" --depth 15'
-
-"	" Skip caching since ag is so fast
-"	let g:ctrlp_use_caching = 0
-"endif
-
-" ctrlp-funky config
-" nnoremap <Leader>fu :CtrlPFunky<Cr>
-" narrow the list down with a word under cursor
-" nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
-" let g:ctrlp_funky_nudists = [ 'php' ]
-
-" ctrlp_bdelete config
-" call ctrlp_bdelete#init()
-
-" Greper config
-" nmap <silent> <leader>a <Plug>GreperBangWord
-
 " ============================================================================
 " FZF {{{
 " ============================================================================
@@ -782,7 +673,6 @@ command! -bang -nargs=* Ag
 
 " highlight trailing whitespace
 highlight ExtraWhitespace ctermbg=red guibg=red
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 match ExtraWhitespace /\s\+$/
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
@@ -803,31 +693,6 @@ function! ScratchToggle()
 endfunction
 
 nnoremap <silent> <leader><tab> :ScratchToggle<cr>
-
-" hardmode config
-" let g:hardtime_default_on = 1
-" let g:hardtime_timeout = 750
-" let g:hardtime_ignore_quickfix = 1
-" let g:hardtime_allow_different_key = 1
-" let g:hardtime_maxcount = 2
-" let g:list_of_normal_keys = ['h','j','k','l','-','+']
-
-" Vdebug settings
-" if hostname() == 'fs01sb.dfw.alchemysystems.com'
-" 	let g:vdebug_options = {
-" 		\	"port" : 9511,
-" 		\	"timeout" : 60,
-" 		\	"path_maps" : {"/web" : "/export/web"},
-" 		\	"break_on_open" : 1,
-" 		\	"continuous_mode" : 0,
-" 	\}
-" else
-" 	let g:vdebug_options = {
-" 		\	"timeout" : 30,
-" 		\	"break_on_open" : 1,
-" 		\	"continuous_mode" : 0,
-" 	\}
-" endif
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " STATUS LINE (won't see much unless we disable Airline)
@@ -861,7 +726,7 @@ endif
 " Quick ESC
 " Some people map jk for this, but it makes Dijkstra sad.
 " imap kj <ESC>
-imap jj <ESC>
+inoremap jj <ESC>
 
 " Insert the hashrocket with CTRL+l
 inoremap <c-l> <space>=><space>
@@ -1008,27 +873,11 @@ nnoremap <silent> \\ :nohlsearch<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " LEADER MAPPINGS
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
-" nmap <space> <leader>
-" xmap <space> <leader>
-" nmap <space><space> <leader><leader>
-" xmap <space><space> <leader><leader>
-
-" xmap includes Visual mode but not Select mode (which we don't often use, but
-" if we did we'd expect hitting space to replace the selected text with a
-" space char).
-" xmap <space> <leader>
-
 " Reload our .vimrc
 nmap <leader>~ :source ~/.vimrc<CR>:redraw!<CR>:AirlineRefresh<CR>:echo "~/.vimrc reloaded!"<CR>
 
 " Open our .vimrc
 nmap <Leader>~~ :e $MYVIMRC<CR>
-
-" Open file
-" nmap <leader>o :CtrlP<CR>
-
-" Open buffer
-" nmap <leader>; :CtrlPBuffer<CR>
 
 " Write file
 nmap <leader>w :w<CR>
@@ -1145,7 +994,7 @@ endif
 if s:hname == "lance-2022\n" || s:hname == "server1\n"
   " vim-chatgpt config
   " let g:chat_gpt_max_tokens=2000
-  let g:chat_gpt_model='gpt-3.5-turbo'
+  let g:chat_gpt_model='gpt-4o'
   " let g:chat_gpt_session_mode=1
   " let g:chat_gpt_temperature = 0.7
   let g:chat_gpt_lang = 'English'
@@ -1225,9 +1074,6 @@ augroup END
 " These settings I think will ultimately be handled by editorconfig, applying
 " globally for now
 autocmd BufNewFile,BufRead *.js set ft=javascript
-autocmd BufNewFile,BufRead *.json set ft=javascript
-"autocmd BufNewFile,BufRead *.jsx set ft=javascript
-autocmd BufNewFile,BufRead *.css set ft=javascript
 "au FileType html,php,javascript,sql,perl,rgt,c,smarty setlocal list
 "au FileType javascript,javascript.jsx,json,css setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 au FileType php,javascript,sql,perl,rgt,c,smarty,python,ruby setlocal list
