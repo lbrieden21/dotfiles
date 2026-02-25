@@ -4,7 +4,6 @@ set mark-symlinked-directories on
 # "\e[B": history-search-forward
 # "\e[A": history-search-backward
 set match-hidden-files off
-set show-all-if-ambiguous on
 set page-completions off
 set completion-query-items 200
 set visible-stats on
@@ -15,5 +14,4 @@ set convert-meta off
 #"\e[3;3~": kill-word
 
 set editing-mode vi
-set keymap vi-command
 #set print-completions-horizontally
