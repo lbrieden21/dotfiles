@@ -1,8 +1,6 @@
 startup_message off
 term xterm-256color
-#termcapinfo xterm-256color|rxvt ti@:te@
-termcapinfo xterm "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
-termcapinfo xterm-color "Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm"
+termcapinfo xterm-256color|rxvt ti@:te@
 defbce "on"
 defutf8 on
 #deflogin on
@@ -18,8 +16,6 @@ shell -/bin/bash
 caption always "%{= kw}%-w%{=b rW}%n %t%{-}%+w %-= %H"
 vbell off
 
-# tell screen that you term can scroll
-termcapinfo xterm ti@:te@
 # bind Shift+PgUp/PgDn
 #bindkey -m "^[[5;2~" stuff ^b
 #bindkey -m "^[[6;2~" stuff ^f
