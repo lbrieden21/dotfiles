@@ -25,6 +25,8 @@ if [ -f /opt/local/bin/gdircolors ]; then
 	eval `/opt/local/bin/gdircolors ~/dotfiles/bash/dir_colors`
 elif type dircolors >/dev/null 2>/dev/null; then
 	eval `dircolors ~/dotfiles/bash/dir_colors`
+elif type gdircolors >/dev/null 2>/dev/null; then
+	eval `gdircolors ~/dotfiles/bash/dir_colors`
 fi
 
 # directories
