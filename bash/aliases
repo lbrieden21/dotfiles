@@ -55,7 +55,7 @@ fi
 alias clnswp='find . -name .*.sw[mnop] -type f -delete'
 
 # quick source/edit various configs
-alias sb='source ~/.bash_profile'
+alias sb='source ~/.bashrc'
 alias ev='vim ~/dotfiles/vim/vimrc'
 
 alias grep='grep --color'
