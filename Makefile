@@ -3,7 +3,7 @@ DIR=$(HOME)/dotfiles
 all: symlinks install_vimplug install_fzf
 
 symlinks:
-	@for file in bash/bash_profile bash/inputrc vim/vim vim/vimrc git/gitconfig git/gitignore_global .screenrc .tmux.conf bin; do \
+	@for file in bash/bashrc bash/bash_profile bash/inputrc vim/vim vim/vimrc git/gitconfig git/gitignore_global .screenrc .tmux.conf bin; do \
 		dest="$${file##*/}"; \
 		if [ "$$dest" = "bin" ]; then \
 			target="$$dest"; \
