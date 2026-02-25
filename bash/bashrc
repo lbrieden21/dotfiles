@@ -19,25 +19,35 @@ done
 unset file
 
 # bash completion
-if type brew &>/dev/null; then
-	HOMEBREW_PREFIX="$(brew --prefix)"
+# Detect Homebrew prefix without forking (brew --prefix is slow)
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
+	:
+elif [[ -d /opt/homebrew ]]; then
+	HOMEBREW_PREFIX=/opt/homebrew
+elif [[ -x /usr/local/bin/brew ]]; then
+	HOMEBREW_PREFIX=/usr/local
+fi
+
+if [[ -n "$HOMEBREW_PREFIX" ]]; then
 	if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
 		source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
 	else
 		for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
-		  [[ -r "${COMPLETION}" ]] && source "${COMPLETION}"
+			[[ -r "${COMPLETION}" ]] && source "${COMPLETION}"
 		done
 	fi
-elif type port >/dev/null 2>/dev/null && [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
+elif type port >/dev/null 2>/dev/null && [[ -f /opt/local/etc/profile.d/bash_completion.sh ]]; then
 	source /opt/local/etc/profile.d/bash_completion.sh
-elif [ -f /etc/bash_completion ]; then
+elif [[ -f /usr/share/bash-completion/bash_completion ]]; then
+	source /usr/share/bash-completion/bash_completion
+elif [[ -f /etc/bash_completion ]]; then
 	source /etc/bash_completion
-elif [ -f /etc/profile.d/bash-completion ]; then
-	source /etc/profile.d/bash-completion
-elif [ -f /etc/profile.d/bash_completion.sh ]; then
-	source /etc/profile.d/bash_completion.sh
-elif [ -f /usr/local/etc/bash_completion ]; then
+elif [[ -f /usr/local/share/bash-completion/bash_completion ]]; then
+	source /usr/local/share/bash-completion/bash_completion
+elif [[ -f /usr/local/etc/bash_completion ]]; then
 	source /usr/local/etc/bash_completion
+elif [[ -f /etc/profile.d/bash_completion.sh ]]; then
+	source /etc/profile.d/bash_completion.sh
 fi
 
 # fzf via git install
