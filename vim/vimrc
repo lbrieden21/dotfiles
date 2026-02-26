@@ -1100,4 +1100,11 @@ autocmd User fugitive
 " Generate a random password
 command! -nargs=1 GeneratePassword execute ":r !openssl rand -base64 48 | tr -d '*/\\\\_-' | cut -c1-<args>"
 
+" Display timestamp under cursor as date
+if has('linux')
+	nnoremap <leader>ts :echo system('date -d @' . expand('<cword>') . ' "+%Y-%m-%d %H:%M:%S"')<CR>
+elseif has('mac') || system('uname') =~? 'freebsd'
+	nnoremap <leader>ts :echo system('date -j -f "%s" ' . expand('<cword>') . ' "+%Y-%m-%d %H:%M:%S"')<CR>
+endif
+
 " vim:set ft=vim et sw=2:
