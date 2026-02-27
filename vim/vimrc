@@ -24,7 +24,8 @@ Plug 'tpope/vim-repeat'
 " a line (takes a count), gc to comment out the target of a motion (for
 " example, gcap to comment out a paragraph), gc in visual mode to comment out
 " the selection, and gc in operator pending mode to target a comment.
-" https://github.com/tpope/vim-commentary Plug 'tpope/vim-commentary'
+" https://github.com/tpope/vim-commentary
+" Plug 'tpope/vim-commentary'
 
 " tcomment provides easy to use, file-type sensible comments for Vim. It can
 " handle embedded syntax.  https://github.com/tomtom/tcomment_vim
@@ -32,9 +33,6 @@ Plug 'tomtom/tcomment_vim'
 
 " Pairs of handy bracket mappings
 Plug 'tpope/vim-unimpaired'
-
-" Add a scratch pad
-Plug 'vim-scripts/scratch.vim'
 
 " Autoclose brackets
 " https://github.com/LunarWatcher/auto-pairs (maintained fork of jiangmiao/auto-pairs)
@@ -125,16 +123,8 @@ Plug 'rhysd/committia.vim'
 " Better visual star searching
 Plug 'bronson/vim-visual-star-search'
 
-" Highlight matching HTML tag
-" Plug 'gregsexton/matchtag'
-
 " A set of mappings for HTML, XML, PHP, ASP, eRuby, JSP, and more (formerly allml)
 Plug 'tpope/vim-ragtag'
-
-" Vim Hard mode
-" Disables using hjkl multiple times in a row
-" https://github.com/takac/vim-hardtime
-" Plug 'takac/vim-hardtime'
 
 " Reopen files where you left off last time
 " https://github.com/dietsche/vim-lastplace
@@ -162,9 +152,6 @@ Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-git'
 
 " Python support
-" Generate Python docstring to your Python script file
-" https://github.com/heavenshell/vim-pydocstring
-Plug 'heavenshell/vim-pydocstring', { 'for': ['python'] }
 " This small script modifies Vim’s indentation behavior to comply with PEP8 and my aesthetic preferences.
 Plug 'Vimjas/vim-python-pep8-indent'
 " Pythonsense is a Vim plugin that provides text objects and motions for Python classes, methods, functions, and doc strings.
@@ -276,7 +263,7 @@ Plug 'moll/vim-bbye'
 
 " Plugins to load on lance-2022 MacOS laptop
 let s:hname = system("hostname -s")
-if s:hname == "lance-2022\n"
+if s:hname == "lance-2025\n"
   " Suggestion and Tab completion
   " Requires a locally-compiled library; see docs. Note this will work
   " fine on Linux, but disabling there since we mostly code on OS X and it
@@ -298,12 +285,6 @@ if s:hname == "lance-2022\n"
   "Plug 'vim-scripts/genutils'
   "Plug 'albfan/vim-breakpts'
 endif
-" Plugins to load on lance-2022 or server1
-if s:hname == "lance-2022\n" || s:hname == "server1\n"
-  " Integrates ChatGPT
-  " https://github.com/CoderCookE/vim-chatgpt
-  Plug 'CoderCookE/vim-chatgpt'
-endif
 
 call plug#end()
 
@@ -311,23 +292,6 @@ call plug#end()
 " SETTINGS
 " tpope/vim-sensible is inlined here & used as a baseline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-" Turn on font that will work with powerline on macvim. At this point not sure
-" why necessary
-if has("gui_running")
-	if has("gui_macvim")
-		":set guifont=DejaVu\ Sans\ Mono\ for\ Powerline:h11
-		:set guifont=Monaco\ for\ Powerline:h12
-	endif
-endif
-
-" Remap auto-pairs keys if on mac
-if has("gui_macvim")
-  let g:AutoPairsShortcutToggle     = 'π' " <m-p>
-  let g:AutoPairsShortcutFastWrap   = '∑' " <m-w>
-  let g:AutoPairsShortcutJump       = '∆' " <m-j>
-  let g:AutoPairsShortcutBackInsert = '∫' " <m-b>
-endif
 
 set autoindent		" preserve indent level on newlines
 set noexpandtab		" use tabs, not spaces
@@ -540,9 +504,6 @@ set synmaxcol=800
 " Vim-session Config
 let g:session_autosave = 'no'
 
-" vim-pydocstring Config to change activation key to <C-d>
-nmap <silent> <C-s> <Plug>(pydocstring)
-
 " vim-json config
 let g:vim_json_syntax_conceal = 0
 
@@ -635,8 +596,8 @@ autocmd  FileType fzf set laststatus=0 noshowmode noruler
 nnoremap <silent> <Leader>o :Files<CR>
 nnoremap <silent> <Leader>;  :Buffers<CR>
 nmap <Leader>r :Tags<CR>
-nmap <Leader>a :Ag<CR>
 " search word under cursor
+" nmap <Leader>a :Ag<CR>
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 
 let g:fzf_colors =
@@ -678,21 +639,6 @@ autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
-
-" Scratch
-command! ScratchToggle call ScratchToggle()
-
-function! ScratchToggle()
-    if exists("w:is_scratch_window")
-        unlet w:is_scratch_window
-        exec "q"
-    else
-        exec "normal! :Sscratch\<cr>\<C-W>L"
-        let w:is_scratch_window = 1
-    endif
-endfunction
-
-nnoremap <silent> <leader><tab> :ScratchToggle<cr>
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " STATUS LINE (won't see much unless we disable Airline)
@@ -865,7 +811,7 @@ nmap <C-n> :bnext<CR>
 nmap <C-p> :bprev<CR>
 
 " Open tag in vertical split
-map <C-\> :vs <CR>:exec("tag ".expand("<cword>"))<CR>
+nmap <C-\> :vs <CR>:exec("tag ".expand("<cword>"))<CR>
 
 " Clear search string to remove highlighting
 nnoremap <silent> \\ :nohlsearch<CR>
@@ -875,9 +821,6 @@ nnoremap <silent> \\ :nohlsearch<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Reload our .vimrc
 nmap <leader>~ :source ~/.vimrc<CR>:redraw!<CR>:AirlineRefresh<CR>:echo "~/.vimrc reloaded!"<CR>
-
-" Open our .vimrc
-nmap <Leader>~~ :e $MYVIMRC<CR>
 
 " Write file
 nmap <leader>w :w<CR>
@@ -973,38 +916,6 @@ nnoremap <leader>tv :TestVisit<CR>
 " Toggle numbers
 nmap <leader>n :setlocal number!<CR><bar>:setlocal relativenumber!<CR>
 
-" lance-2022 Mac laptop mappings
-" s:hname is set above in the plugin's section
-if s:hname == "lance-2022\n"
-  " Set clipboard to system clipboard
-  set clipboard=unnamed
-  " Search for word under cursor in Dash.app
-  nmap <leader>d <Plug>DashSearch
-  nmap <leader>D <Plug>DashGlobalSearch
-
-  " Use Marked.app to preview Markdown files...
-  " http://stackoverflow.com/questions/9212340/is-there-a-vim-plugin-for-preview-markdown-file
-  function! s:setupMarkup()
-    nmap <leader>M :silent !open -a Marked.app '%:p'<CR>:redraw!<CR>
-  endfunction
-  autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
-endif
-
-" lance-2022 and server1 vim-chatgpt plugin configuration
-if s:hname == "lance-2022\n" || s:hname == "server1\n"
-  " vim-chatgpt config
-  " let g:chat_gpt_max_tokens=2000
-  let g:chat_gpt_model='gpt-4o'
-  " let g:chat_gpt_session_mode=1
-  " let g:chat_gpt_temperature = 0.7
-  let g:chat_gpt_lang = 'English'
-  let g:chat_gpt_split_direction = 'vertical'
-  let g:split_ratio=2
-endif
-
-" Open new vertical split
-noremap <leader>v <C-w>v
-
 " unmap F1 - stupid help key
 inoremap <F1> <ESC>
 nnoremap <F1> <ESC>
@@ -1022,22 +933,17 @@ function! RD_SetupWrapping()
 endfunction
 
 " Make sure all markdown files have the correct filetype set and setup wrapping
-augroup markdown
-  autocmd!
-  autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} setf markdown
-  autocmd FileType markdown call RD_SetupWrapping()
-  autocmd FileType markdown setlocal ts=4 sts=4 sw=4
-augroup END
+" augroup markdown
+"   autocmd!
+"   autocmd BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} setf markdown
+"   autocmd FileType markdown call RD_SetupWrapping()
+"   autocmd FileType markdown setlocal ts=4 sts=4 sw=4
+" augroup END
 
 " enable spell checking on certain files
 augroup Spelling
   autocmd!
   autocmd BufNewFile,BufRead COMMIT_EDITMSG set spell
-augroup END
-
-augroup vagrant
-  autocmd!
-  autocmd BufRead,BufNewFile Vagrantfile set filetype=ruby
 augroup END
 
 " Javascript
@@ -1059,23 +965,6 @@ augroup ft_vim
     au BufWinEnter *.txt if &ft == 'help' | wincmd L | endif
 augroup END
 
-" Handle SISTEM Managers crazy file types
-augroup Manager
-  autocmd!
-  autocmd BufNewFile,BufRead *.phph set filetype=php
-  autocmd BufNewFile,BufRead *.php3 set filetype=php
-  "autocmd BufNewFile,BufRead *.html set filetype=php
-  autocmd BufNewFile,BufRead *.phtml set filetype=php
-  autocmd BufNewFile,BufRead *.rgt setf rgt
-  autocmd BufNewFile,BufRead *.cir set filetype=xml
-  autocmd BufNewFile,BufRead *.jrxml set filetype=xml
-augroup END
-
-" These settings I think will ultimately be handled by editorconfig, applying
-" globally for now
-autocmd BufNewFile,BufRead *.js set ft=javascript
-"au FileType html,php,javascript,sql,perl,rgt,c,smarty setlocal list
-"au FileType javascript,javascript.jsx,json,css setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 au FileType php,javascript,sql,perl,rgt,c,smarty,python,ruby setlocal list
 au FileType javascript,javascript.jsx,json,css,html,yaml,puppet,sh,ruby,eruby,tsx,typescript,typescriptreact,perl setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 au FileType python,ruby setlocal textwidth=100
@@ -1093,9 +982,6 @@ autocmd User fugitive
   \ if get(b:, 'fugitivie_type', '') =~# '^\%(tree\|blob\)$' |
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
-
-" HACK to make ale only use phpcs when in ETS clean directories
-" au BufNewFile,BufRead */templates/*.php set g:ale_php_phpcs_standard=path/to/rules.xml
 
 " Generate a random password
 command! -nargs=1 GeneratePassword execute ":r !openssl rand -base64 48 | tr -d '*/\\\\_-' | cut -c1-<args>"
