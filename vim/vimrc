@@ -198,14 +198,14 @@ Plug 'StanAngeloff/php.vim'
 Plug 'junegunn/vim-emoji'
 
 " Color schemes
-Plug 'altercation/vim-colors-solarized'
-"Plug 'sickill/vim-monokai'
-Plug 'lbrieden21/vim-monokai'
-" Plug 'jpo/vim-railscasts-theme'
-Plug 'mhartington/oceanic-next'
 Plug 'morhetz/gruvbox'
-Plug 'sjl/badwolf'
-Plug 'sheerun/vim-wombat-scheme'
+" Plug 'altercation/vim-colors-solarized'
+" Plug 'sickill/vim-monokai'
+" Plug 'lbrieden21/vim-monokai'
+" Plug 'jpo/vim-railscasts-theme'
+" Plug 'mhartington/oceanic-next'
+" Plug 'sjl/badwolf'
+" Plug 'sheerun/vim-wombat-scheme'
 " Plug 'flazz/vim-colorschemes' " literal crapload of colorschemes
 
 " VDebug debugger
