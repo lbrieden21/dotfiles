@@ -6,9 +6,6 @@ call plug#begin('~/.vim/plugged')
 
 " Vim Airline improves the look & functionality of the statusline.
 Plug 'vim-airline/vim-airline' | Plug 'vim-airline/vim-airline-themes'
-" Was on fs01sb config but commented out because it caused tmux/vim to hang,
-" would like to debug at some point
-"Plug 'edkolev/tmuxline.vim'
 
 " Surround.vim lets you add/change/remove surrounding chars and tags
 " https://github.com/tpope/vim-surround
@@ -80,10 +77,6 @@ endif
 " Plug 'editorconfig/editorconfig-vim', { 'for': ['javascript', 'javascript.jsx'] }
 Plug 'editorconfig/editorconfig-vim'
 
-" Searches Dash.app for the word under the cursor with <leader>d
-" https://github.com/rizzatti/dash.vim
-Plug 'rizzatti/dash.vim'
-
 " Adds the :G family of commands for grepping. Automatically decides between
 " Ag, Ack and Grep depending on what's available.
 " https://github.com/rizzatti/greper.vim
@@ -127,8 +120,8 @@ Plug 'bronson/vim-visual-star-search'
 Plug 'tpope/vim-ragtag'
 
 " Reopen files where you left off last time
-" https://github.com/dietsche/vim-lastplace
-Plug 'dietsche/vim-lastplace'
+" https://github.com/farmergreg/vim-lastplace
+Plug 'farmergreg/vim-lastplace'
 
 " Add file manip commands like Remove, Move, Rename, SudoWrite
 Plug 'tpope/vim-eunuch'
@@ -148,7 +141,7 @@ Plug 'xolox/vim-misc' | Plug 'xolox/vim-session'
 Plug 'EinfachToll/DidYouMean'
 
 " Language syntax support
-Plug 'tpope/vim-markdown', { 'for': 'markdown' }
+"Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-git'
 
 " Python support
@@ -157,17 +150,11 @@ Plug 'Vimjas/vim-python-pep8-indent'
 " Pythonsense is a Vim plugin that provides text objects and motions for Python classes, methods, functions, and doc strings.
 Plug 'jeetsukumaran/vim-pythonsense'
 
-" Tools and environment to make Vim superb for developing with Node.jS
-" https://github.com/moll/vim-node
-Plug 'moll/vim-node', { 'for': ['javascript', 'javascript.jsx'] }
-
 " Javascript Syntax Support
 Plug 'elzr/vim-json'
 
 " Typescript support
-Plug 'Quramy/tsuquyomi'
 Plug 'leafgarland/typescript-vim'
-Plug 'peitalin/vim-jsx-typescript'
 
 " Javascript / JSX syntax
 " pangloss/vim-javascript is actively maintained with built-in JSX support
@@ -608,8 +595,9 @@ autocmd  FileType fzf set laststatus=0 noshowmode noruler
 nnoremap <silent> <Leader>o :Files<CR>
 nnoremap <silent> <Leader>;  :Buffers<CR>
 nmap <Leader>r :Tags<CR>
+" bring up search box
+nmap <Leader>a :Ag<CR>
 " search word under cursor
-" nmap <Leader>a :Ag<CR>
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 
 let g:fzf_colors =
