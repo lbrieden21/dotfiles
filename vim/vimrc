@@ -306,9 +306,10 @@ set complete-=i
 " Don't assume numbers starting with zero are octal
 set nrformats-=octal
 
-" Time out on key codes but not mappings.
-" Basically this makes terminal Vim work sanely.
-set notimeout
+" Time out on mappings and terminal key codes.
+" Keep both on the lower side for responsiveness.
+set timeout
+set timeoutlen=300
 set ttimeout
 set ttimeoutlen=10
 
