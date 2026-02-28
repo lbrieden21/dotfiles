@@ -348,10 +348,6 @@ set sidescrolloff=10
 set sidescroll=1
 set display+=lastline " show the last line that fits in window (vs '@@@@')
 
-if &encoding ==# 'latin1' && has('gui_running')
-  set encoding=utf-8
-endif
-
 " Changes what Vim displays for special chars like trailing space & tabs
 set nolist " Don't show invisible characters
 " let &listchars = "tab:>-,trail:\u2591,extends:>,precedes:<,nbsp:\u00b7"
@@ -364,7 +360,7 @@ endif
 
 set autoread 			" reload unchanged buffers when file changed outside vim
 
-" remember more than 20 previous search/commands
+" remember more than 1000 previous search/commands
 if &history < 1000
   set history=1000
 endif
@@ -540,42 +536,44 @@ else
   let g:gitgutter_sign_column_always = 1
 endif
 
-" ALE linter config
-" let g:ale_sign_column_always = 1
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚠'
-" let g:ale_php_phpcs_standard = 'PSR2'
-let g:ale_php_phpcs_standard = 'phpcs.xml'
-" let g:ale_php_phpcs_standard = '/web/lbriedendev.com/git/ets/www/phpcs.xml'
-" let g:ale_php_phpcs_use_global = 1
-" let g:ale_php_phpcs_executable = 'phpcs -a --standard=phpcs.xml'
-" let g:ale_fixers = []
-" let g:ale_fixers.javascript = ['eslint']
-" Turn on all php linters except phpcs and phpmd
-let g:ale_linters = {
-\   'php': ['hack', 'langserver', 'php', 'phpstan'], 'perl': ['syntax-check','perlcritic'],
-\}
-" Unless we are in api or phpunit directories, then turn on ones we actually use
-let g:ale_pattern_options = {
-\   'www/.\+/\(api\|phpunit\|codeception-new\)/.\+\.phph\?$': {
-\       'ale_linters': {'php': ['php', 'phpcs', 'phpmd']},
-\   },
-\}
-
-" Syntastic config
-let g:syntastic_enable_signs = 1 " check if this slows things down
-let g:syntastic_check_on_open = 1
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '⚠'
-let g:syntastic_auto_jump = 0
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_javascript_checkers = ['eslint']
-"let g:syntastic_php_phpcs_args="--standard=PSR2"
-let g:puppet_module_detect=1
-let g:syntastic_puppet_puppetlint_args = "--no-80-chars-check --no-class_inherits_from_params_class-check"
-let g:syntastic_mode_map = { 'mode': 'active',
-  \ 'active_filetypes': ['javascript', 'python', 'perl', 'sh', 'puppet'],
-  \ 'passive_filetypes': ['html','php'] }
+if version >= 800
+  " ALE linter config
+  " let g:ale_sign_column_always = 1
+  let g:ale_sign_error = '✗'
+  let g:ale_sign_warning = '⚠'
+  " let g:ale_php_phpcs_standard = 'PSR2'
+  let g:ale_php_phpcs_standard = 'phpcs.xml'
+  " let g:ale_php_phpcs_standard = '/web/lbriedendev.com/git/ets/www/phpcs.xml'
+  " let g:ale_php_phpcs_use_global = 1
+  " let g:ale_php_phpcs_executable = 'phpcs -a --standard=phpcs.xml'
+  " let g:ale_fixers = []
+  " let g:ale_fixers.javascript = ['eslint']
+  " Turn on all php linters except phpcs and phpmd
+  let g:ale_linters = {
+  \   'php': ['hack', 'langserver', 'php', 'phpstan'], 'perl': ['syntax-check','perlcritic'],
+  \}
+  " Unless we are in api or phpunit directories, then turn on ones we actually use
+  let g:ale_pattern_options = {
+  \   'www/.\+/\(api\|phpunit\|codeception-new\)/.\+\.phph\?$': {
+  \       'ale_linters': {'php': ['php', 'phpcs', 'phpmd']},
+  \   },
+  \}
+else
+  " Syntastic config
+  let g:syntastic_enable_signs = 1 " check if this slows things down
+  let g:syntastic_check_on_open = 1
+  let g:syntastic_error_symbol = '✗'
+  let g:syntastic_warning_symbol = '⚠'
+  let g:syntastic_auto_jump = 0
+  let g:syntastic_always_populate_loc_list = 1
+  let g:syntastic_javascript_checkers = ['eslint']
+  "let g:syntastic_php_phpcs_args="--standard=PSR2"
+  let g:puppet_module_detect=1
+  let g:syntastic_puppet_puppetlint_args = "--no-80-chars-check --no-class_inherits_from_params_class-check"
+  let g:syntastic_mode_map = { 'mode': 'active',
+    \ 'active_filetypes': ['javascript', 'python', 'perl', 'sh', 'puppet'],
+    \ 'passive_filetypes': ['html','php'] }
+endif
 
 " editorconfig config
 let g:EditorConfig_exclude_patterns = ['fugitive://.*']
@@ -720,10 +718,6 @@ inoremap <C-t> <Esc>:tabnew<CR>
 "inoremap <C-j> <Esc>:tabprevious<CR>i
 "inoremap <C-k> <Esc>:tabnext<CR>i
 
-" Make crl-a work in command mode
-cnoremap <c-a> <home>
-cnoremap <c-e> <end>
-
 " Allow for some common quit/write cmd typos
 command! Q q " Bind :Q to :q
 command! W w " Bind :W to :w
@@ -792,16 +786,6 @@ endfunction
 
 vnoremap <silent> <C-k> :<C-u>call MoveVisualUp()<CR>
 vnoremap <silent> <C-j> :<C-u>call MoveVisualDown()<CR>
-" normal mode affects horizontal splits or being able to move to CtrlP or
-" Greper quickfix or location windows opened in split below
-" nnoremap <silent> <C-k> :<C-u>call MoveLineUp()<CR>
-" nnoremap <silent> <C-j> :<C-u>call MoveLineDown()<CR>
-" Reindent line/selection after move
-" nnoremap <silent> <C-k> :<C-u>call MoveLineUp()<CR>==
-" nnoremap <silent> <C-j> :<C-u>call MoveLineDown()<CR>==
-" vnoremap <silent> <C-k> :<C-u>call MoveVisualUp()<CR>=gv
-" vnoremap <silent> <C-j> :<C-u>call MoveVisualDown()<CR>=gv
-" END LINE MOVEMENT
 
 " Back to the buffer we came from
 nmap <C-e> :e#<CR>
@@ -876,21 +860,28 @@ nmap <leader>= gg=G``:echo "reindent global"<CR>
 " Toggle match highlight
 nmap <leader>l :set invhlsearch<CR>
 
-" Highlight matches when jumping to next
-function! HLNext (blinktime)
-  highlight WhiteOnRed ctermfg=white ctermbg=red
-  let [bufnum, lnum, col, off] = getpos('.')
-  let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
-  let target_pat = '\c\%#'.@/
-  let ring = matchadd('WhiteOnRed', target_pat, 101)
-  redraw
-  exec 'sleep ' . a:blinktime . 'm'
-  call matchdelete(ring)
-  redraw
-endfunction
-" Now, remap n/N so they call themselves, center screen & call HLNext
-nnoremap <silent> n nzz:call HLNext(300)<cr>
-nnoremap <silent> N Nzz:call HLNext(300)<cr>
+" Highlight the current search match when jumping to next
+if has('patch-8.1.547')
+  " Vim 8.1.547+ has CurSearch highlight group for the active match
+  highlight CurSearch ctermfg=white ctermbg=red guifg=white guibg=red
+  nnoremap <silent> n nzz
+  nnoremap <silent> N Nzz
+else
+  " Legacy blink workaround: temporarily add a match highlight on the current hit
+  function! HLNext (blinktime)
+    highlight WhiteOnRed ctermfg=white ctermbg=red
+    let [bufnum, lnum, col, off] = getpos('.')
+    let matchlen = strlen(matchstr(strpart(getline('.'),col-1),@/))
+    let target_pat = '\c\%#'.@/
+    let ring = matchadd('WhiteOnRed', target_pat, 101)
+    redraw
+    exec 'sleep ' . a:blinktime . 'm'
+    call matchdelete(ring)
+    redraw
+  endfunction
+  nnoremap <silent> n nzz:call HLNext(300)<cr>
+  nnoremap <silent> N Nzz:call HLNext(300)<cr>
+endif
 
 " Tabular.vim
 nnoremap <Leader>t= :Tabularize assignment<CR>
