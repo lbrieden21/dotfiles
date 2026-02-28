@@ -264,29 +264,10 @@ Plug 'moll/vim-bbye'
 " Plugins to load on lance-2022 MacOS laptop
 let s:hname = system("hostname -s")
 if s:hname == "lance-2025\n"
-  " Suggestion and Tab completion
-  " Requires a locally-compiled library; see docs. Note this will work
-  " fine on Linux, but disabling there since we mostly code on OS X and it
-  " can be a hassle to compile the dependent libraries.
-  " https://github.com/Valloric/YouCompleteMe
-  "Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-  Plug 'ternjs/tern_for_vim', { 'do': 'npm install' }
-  "Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
-  " Newer Homebrew LLVM (v16+) moved libc++ to lib/c++; use a funcref so multi-word
-  " LDFLAGS don't require any Vimscript string escaping.
-  function! YcmInstallWithLLVM(info)
-    let l:flags  = '-L/opt/homebrew/opt/llvm/lib'
-    let l:flags .= ' -L/opt/homebrew/opt/llvm/lib/c++'
-    let l:flags .= ' -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++'
-    let l:cmd  = 'env CC=/opt/homebrew/opt/llvm/bin/clang'
-    let l:cmd .= ' CXX=/opt/homebrew/opt/llvm/bin/clang++'
-    let l:cmd .= ' LDFLAGS=' . shellescape(l:flags)
-    let l:cmd .= ' CPPFLAGS=-I/opt/homebrew/opt/llvm/include'
-    let l:cmd .= ' MACOSX_DEPLOYMENT_TARGET=13.0'
-    let l:cmd .= ' ./install.py --tern-completer'
-    call system(l:cmd)
-  endfunction
-  Plug 'Valloric/YouCompleteMe', { 'do': function('YcmInstallWithLLVM') }
+  " coc.nvim - LSP-based completion (replaces YouCompleteMe + tern_for_vim)
+  " Requires Node.js. Extensions in g:coc_global_extensions are auto-installed.
+  " https://github.com/neoclide/coc.nvim
+  Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
   " This plugin adds Copilot-like code completion support to Vim. It uses Ollama
   " as a backend, which can run locally and does not require cloud services,
@@ -517,15 +498,45 @@ let g:session_autosave = 'no'
 " vim-json config
 let g:vim_json_syntax_conceal = 0
 
-" YouCompleteMe Config
-let g:ycm_collect_identifiers_from_tags_files = 1
-let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_autoclose_preview_window_after_completion = 1
-let g:ycm_autoclose_preview_window_after_insertion = 1
-" Remove <TAB> because it conflicts with Snipmate
-" Note that it's easier to navigate the suggestions with C-n/C-p anyway
-let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
+" coc.nvim Config (only on machines where the plugin is registered)
+if has_key(g:plugs, 'coc.nvim')
+  " Extensions to auto-install on startup (covers filetypes used in this config).
+  " Note: no coc extensions for Perl or Puppet - no maintained LSP exists for them.
+  let g:coc_global_extensions = [
+    \ 'coc-tsserver',
+    \ 'coc-json',
+    \ 'coc-html',
+    \ 'coc-css',
+    \ 'coc-pyright',
+    \ 'coc-python',
+    \ 'coc-phpls',
+    \ 'coc-sh',
+    \ 'coc-vimlsp',
+    \ ]
+
+  " Use <C-space> to trigger completion
+  inoremap <silent><expr> <C-space> coc#refresh()
+  " Use C-j/C-k to navigate completion list (consistent with old YCM bindings)
+  inoremap <expr> <C-j> coc#pum#visible() ? coc#pum#next(1) : '<C-j>'
+  inoremap <expr> <C-k> coc#pum#visible() ? coc#pum#prev(1) : '<C-k>'
+  " Confirm completion with <CR>
+  inoremap <expr> <CR> coc#pum#visible() ? coc#pum#confirm() : '<CR>'
+  " Navigate diagnostics
+  nmap <silent> [g <Plug>(coc-diagnostic-prev)
+  nmap <silent> ]g <Plug>(coc-diagnostic-next)
+  " GoTo code navigation
+  nmap <silent> gd <Plug>(coc-definition)
+  nmap <silent> gy <Plug>(coc-type-definition)
+  nmap <silent> gi <Plug>(coc-implementation)
+  nmap <silent> gr <Plug>(coc-references)
+  " Show documentation under cursor
+  nnoremap <silent> K :call CocAction('doHover')<CR>
+  " Rename symbol
+  nmap <leader>rn <Plug>(coc-rename)
+  " Symbol search
+  nnoremap <silent> <leader>co :<C-u>CocList outline<CR>
+  let g:coc_disable_transparent_cursor = 1
+endif
 
 " UltiSnips config
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -552,26 +563,14 @@ endif
 
 if version >= 800
   " ALE linter config
-  " let g:ale_sign_column_always = 1
+  " ALE handles CLI-based linting (phpcs, phpstan, perlcritic, etc.)
+  " LSP-based diagnostics and completion are handled by coc.nvim instead.
+  " Disable ALE's built-in LSP support to avoid duplicating what coc does.
+  let g:ale_disable_lsp = 1
   let g:ale_sign_error = '✗'
   let g:ale_sign_warning = '⚠'
   " let g:ale_php_phpcs_standard = 'PSR2'
   let g:ale_php_phpcs_standard = 'phpcs.xml'
-  " let g:ale_php_phpcs_standard = '/web/lbriedendev.com/git/ets/www/phpcs.xml'
-  " let g:ale_php_phpcs_use_global = 1
-  " let g:ale_php_phpcs_executable = 'phpcs -a --standard=phpcs.xml'
-  " let g:ale_fixers = []
-  " let g:ale_fixers.javascript = ['eslint']
-  " Turn on all php linters except phpcs and phpmd
-  let g:ale_linters = {
-  \   'php': ['hack', 'langserver', 'php', 'phpstan'], 'perl': ['syntax-check','perlcritic'],
-  \}
-  " Unless we are in api or phpunit directories, then turn on ones we actually use
-  let g:ale_pattern_options = {
-  \   'www/.\+/\(api\|phpunit\|codeception-new\)/.\+\.phph\?$': {
-  \       'ale_linters': {'php': ['php', 'phpcs', 'phpmd']},
-  \   },
-  \}
 else
   " Syntastic config
   let g:syntastic_enable_signs = 1 " check if this slows things down
