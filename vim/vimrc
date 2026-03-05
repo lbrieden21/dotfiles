@@ -385,6 +385,13 @@ if $TERM =~ "-256color"
   set t_Co=256
 endif
 set background=dark
+
+" Work around terminal BCE repaint artifacts (black to EOL after scroll)
+" seen on macOS terminals when Vim uses non-default background colors.
+if has('mac')
+  set t_ut=
+endif
+
 silent! colorscheme gruvbox
 let g:airline_theme='gruvbox'
 " silent! colorscheme solarized
