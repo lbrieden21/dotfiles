@@ -41,8 +41,9 @@ install_fzf:
 
 set_locale:
 	@set -e; \
-	if [ "$$(locale 2>/dev/null | awk -F= '/^LANG=/{print $$2}' | tr -d '"')" = "en_US.UTF-8" ]; then \
-		echo "Locale already set (LANG=en_US.UTF-8); nothing to do."; \
+	_lang=$$(locale 2>/dev/null | awk -F= '/^LANG=/{print $$2}' | tr -d '"' | tr '[:upper:]' '[:lower:]'); \
+	if [ "$$_lang" = "en_us.utf-8" ] || [ "$$_lang" = "en_us.utf8" ]; then \
+		echo "Locale already set (LANG=$$_lang); nothing to do."; \
 	else \
 		sudo sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen; \
 		sudo locale-gen; \
