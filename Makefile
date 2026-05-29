@@ -36,8 +36,20 @@ gitTools:
 	ln -s $(DIR)/git-clones/git-open/git-open $(DIR)/bin/
 
 install_fzf:
-	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-	~/.fzf/install --key-bindings --completion --no-update-rc
+	@if [ -d ~/.fzf/.git ]; then \
+		echo "fzf checkout already exists at ~/.fzf, skipping clone."; \
+	elif [ -e ~/.fzf ]; then \
+		echo "~/.fzf exists but is not an fzf git checkout."; \
+		exit 1; \
+	else \
+		git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; \
+	fi
+	@if [ -x ~/.fzf/install ]; then \
+		~/.fzf/install --key-bindings --completion --no-update-rc; \
+	else \
+		echo "fzf installer not found at ~/.fzf/install."; \
+		exit 1; \
+	fi
 
 set_locale:
 	@set -e; \
