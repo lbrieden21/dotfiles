@@ -1,6 +1,7 @@
 startup_message off
-term xterm-256color
-termcapinfo xterm-256color|rxvt ti@:te@
+term screen-256color
+altscreen on
+#termcapinfo xterm-256color|rxvt ti@:te@
 defbce "on"
 defutf8 on
 #deflogin on
