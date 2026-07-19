@@ -1,13 +1,19 @@
 # @gf3’s Sexy Bash Prompt, inspired by “Extravagant Zsh Prompt”
 # Customized for the Solarized color scheme by Sean O'Neil
 
-if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
-	export TERM=gnome-256color
-elif infocmp xterm-256color >/dev/null 2>&1; then
-	if [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
-		export TERM=xterm-256color
-	else
-		export TERM=xterm-256color
+# Don't touch TERM inside screen/tmux - they already set it correctly
+# (screen-256color / tmux-256color) so their host terminal can translate
+# escape codes; forcing xterm-256color here breaks color rendering inside
+# those sessions.
+if [ -z "$STY" ] && [ -z "$TMUX" ]; then
+	if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
+		export TERM=gnome-256color
+	elif infocmp xterm-256color >/dev/null 2>&1; then
+		if [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
+			export TERM=xterm-256color
+		else
+			export TERM=xterm-256color
+		fi
 	fi
 fi
 

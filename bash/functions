@@ -125,8 +125,8 @@ if [ "$(uname -s)" = "FreeBSD" ]; then
         local max_len=$(( len_new > len_old ? len_new : len_old ))
 
         while [ "$j" -lt "$max_len" ]; do
-          local char_new="${new_line:$j:1}"
-          local char_old="${old_line:$j:1}"
+          local char_new="${new_line:${j}:1}"
+          local char_old="${old_line:${j}:1}"
           if [ "$char_new" != "$char_old" ]; then
             out_line+=$'\033[7m'"${char_new:- }"$'\033[0m'
           else
