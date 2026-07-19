@@ -3,10 +3,12 @@ DIR=$(HOME)/dotfiles
 all: symlinks install_vimplug install_fzf
 
 symlinks:
-	@for file in bash/bashrc bash/bash_profile bash/inputrc vim/vim vim/vimrc git/gitconfig git/gitignore_global .screenrc .tmux.conf bin; do \
+	@mkdir -p "$$HOME/.config"
+	@for file in bash/bashrc bash/bash_profile bash/inputrc vim/vim vim/vimrc git/gitconfig git/gitignore_global .screenrc .tmux.conf bin nvim; do \
 		dest="$${file##*/}"; \
 		case "$$dest" in \
 			bin) target="$$dest" ;; \
+			nvim) target=".config/nvim" ;; \
 			.*) target="$$dest" ;; \
 			*) target=".$$dest" ;; \
 		esac; \
@@ -17,7 +19,7 @@ symlinks:
 			echo "Backing up existing $$HOME/$$target to $$HOME/$$target.bak"; \
 			mv -v "$$HOME/$$target" "$$HOME/$$target.bak"; \
 		fi; \
-		if [ "$$file" = "vim/vim" ] || [ "$$file" = "bin" ]; then \
+		if [ "$$file" = "vim/vim" ] || [ "$$file" = "bin" ] || [ "$$file" = "nvim" ]; then \
 			ln -nsf "$(DIR)/$$file" "$$HOME/$$target"; \
 		else \
 			ln -sf "$(DIR)/$$file" "$$HOME/$$target"; \
