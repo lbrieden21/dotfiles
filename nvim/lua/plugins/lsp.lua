@@ -38,6 +38,23 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
+-- vim.lsp.buf.hover()'s floating window has no LSP-scoped K keymap of its
+-- own, so a second "K" (which per :h vim.lsp.buf.hover() focuses the
+-- window) leaves a third "K" falling through to the buffer-local
+-- 'keywordprg', which defaults to ":Man" and opens a man page for whatever
+-- word the cursor lands on (e.g. the "python" language tag on a hover's
+-- fenced code block). Give that floating buffer its own "K" so it closes
+-- the window instead.
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "markdown",
+	group = vim.api.nvim_create_augroup("LspHoverFloatKeymaps", { clear = true }),
+	callback = function(args)
+		if vim.bo[args.buf].buftype == "nofile" and not vim.bo[args.buf].modifiable then
+			vim.keymap.set("n", "K", "<cmd>close<cr>", { buffer = args.buf, silent = true })
+		end
+	end,
+})
+
 return {
 	{
 		"mason-org/mason.nvim",

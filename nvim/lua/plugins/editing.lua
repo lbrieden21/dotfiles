@@ -33,19 +33,6 @@ return {
 		opts = {},
 	},
 
-	-- Easier argument wrapping. Upstream is archived; active development
-	-- continues at the sourcehut mirror.
-	{
-		url = "https://git.sr.ht/~foosoft/vim-argwrap",
-		cmd = "ArgWrap",
-		init = function()
-			vim.g.argwrap_tail_comma = 1
-		end,
-		keys = {
-			{ "<leader>A", "<cmd>ArgWrap<CR>", desc = "ArgWrap" },
-		},
-	},
-
 	-- Mappings for HTML, XML, PHP, ASP, eRuby, JSP, and more
 	{ "tpope/vim-ragtag", event = "VeryLazy" },
 
@@ -64,20 +51,6 @@ return {
 	-- Instant table creation
 	{ "dhruvasagar/vim-table-mode", keys = { "<leader>tm" } },
 
-	-- Emoji! 😄
-	{
-		"junegunn/vim-emoji",
-		event = "VeryLazy",
-		config = function()
-			vim.o.completefunc = "emoji#complete"
-			vim.keymap.set(
-				"v",
-				"<c-e>",
-				[[:s/:\([^:]\+\):/\=emoji#for(submatch(1), submatch(0))/<CR>:nohlsearch<CR>:redraw!<CR>]]
-			)
-		end,
-	},
-
 	-- Better visual star searching
 	{ "bronson/vim-visual-star-search", event = "VeryLazy" },
 
@@ -89,6 +62,10 @@ return {
 		version = false,
 		event = "VeryLazy",
 		config = function()
+			-- Replaces nvim-web-devicons
+			require("mini.icons").setup()
+			MiniIcons.mock_nvim_web_devicons()
+
 			require("mini.extra").setup()
 
 			-- Replaces targets.vim + vim-indent-object
@@ -112,6 +89,8 @@ return {
 			require("mini.splitjoin").setup({
 				mappings = { toggle = "", split = "gS", join = "gJ" },
 			})
+			-- Replaces vim-argwrap
+			map("n", "<leader>A", function() require("mini.splitjoin").toggle() end)
 
 			-- Replaces vim-unimpaired, kept only for the jump categories
 			-- vim-unimpaired never had: git-conflict markers, treesitter nodes,
@@ -130,6 +109,13 @@ return {
 			require("mini.bufremove").setup()
 			map("n", "<leader>q", function()
 				require("mini.bufremove").delete(0, false)
+			end)
+
+			-- Replaces the ExtraWhitespace match autocmds
+			require("mini.trailspace").setup()
+			vim.api.nvim_set_hl(0, "MiniTrailspace", { bg = "red" })
+			map("n", "<leader>tw", function()
+				require("mini.trailspace").trim()
 			end)
 		end,
 	},

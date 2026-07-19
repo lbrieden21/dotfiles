@@ -1,6 +1,6 @@
 return {
 	"ibhagwan/fzf-lua",
-	dependencies = { "nvim-tree/nvim-web-devicons" },
+	dependencies = { "nvim-mini/mini.nvim" },
 	opts = {
 		fzf_colors = true,
 	},
