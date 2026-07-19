@@ -4,8 +4,7 @@ return {
 	event = "InsertEnter",
 	dependencies = {
 		"L3MON4D3/LuaSnip",
-		"honza/vim-snippets",
-		"justinj/vim-react-snippets",
+		"rafamadriz/friendly-snippets",
 	},
 	opts = {
 		keymap = {
@@ -15,6 +14,11 @@ return {
 			preset = "super-tab",
 			["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
 			["<CR>"] = { "accept", "fallback" },
+			-- This overrides the super-tab preset's <C-k> (show_signature/hide_signature) -
+			-- fine, since signature help stays on by default (below) and
+			-- doesn't need a manual toggle.
+			["<C-j>"] = { "select_next", "fallback" },
+			["<C-k>"] = { "select_prev", "fallback" },
 		},
 		snippets = { preset = "luasnip" },
 		-- Off by default in blink.cmp. This is what replaces per-argument
@@ -22,8 +26,7 @@ return {
 		-- a bare `func($0)` plus a client-side "trigger parameter hints"
 		-- command instead of a $1/$2/$3 snippet - show_on_accept_on_trigger_character
 		-- (a default-on trigger option) picks that up since the cursor lands
-		-- right after the "(" trigger character. <C-k> (super-tab preset)
-		-- also shows/hides it manually.
+		-- right after the "(" trigger character.
 		signature = { enabled = true },
 		completion = {
 			list = {
@@ -40,13 +43,7 @@ return {
 		},
 	},
 	config = function(_, opts)
-		-- LuaSnip has never shipped an UltiSnips-format loader (only
-		-- from_lua/from_snipmate/from_vscode - confirmed empirically against
-		-- the installed plugin and its full git history, and LuaSnip's own
-		-- wiki points UltiSnips migrators at from_snipmate). vim-snippets and
-		-- vim-react-snippets both also ship a snipmate-format `snippets/`
-		-- folder alongside their `UltiSnips/` one, so load that instead.
-		require("luasnip.loaders.from_snipmate").lazy_load()
+		require("luasnip.loaders.from_vscode").lazy_load()
 		require("blink.cmp").setup(opts)
 	end,
 }
