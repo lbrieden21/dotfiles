@@ -2,18 +2,38 @@
 vim.cmd("highlight ExtraWhitespace ctermbg=red guibg=red")
 vim.cmd([[match ExtraWhitespace /\s\+$/]])
 
+-- Scratch/floating windows (completion popups, hover docs, etc.) also fire
+-- BufWinEnter/InsertEnter for their own buffer, and their content is often
+-- padded with trailing spaces for alignment - skip those so we only ever
+-- mark up trailing whitespace in real editable buffers.
+local function editing_normal_buffer()
+	return vim.bo.buftype == "" and vim.api.nvim_win_get_config(0).relative == ""
+end
+
 local whitespace_group = vim.api.nvim_create_augroup("ExtraWhitespace", { clear = true })
 vim.api.nvim_create_autocmd("BufWinEnter", {
 	group = whitespace_group,
-	command = [[match ExtraWhitespace /\s\+$/]],
+	callback = function()
+		if editing_normal_buffer() then
+			vim.cmd([[match ExtraWhitespace /\s\+$/]])
+		end
+	end,
 })
 vim.api.nvim_create_autocmd("InsertEnter", {
 	group = whitespace_group,
-	command = [[match ExtraWhitespace /\s\+\%#\@<!$/]],
+	callback = function()
+		if editing_normal_buffer() then
+			vim.cmd([[match ExtraWhitespace /\s\+\%#\@<!$/]])
+		end
+	end,
 })
 vim.api.nvim_create_autocmd("InsertLeave", {
 	group = whitespace_group,
-	command = [[match ExtraWhitespace /\s\+$/]],
+	callback = function()
+		if editing_normal_buffer() then
+			vim.cmd([[match ExtraWhitespace /\s\+$/]])
+		end
+	end,
 })
 vim.api.nvim_create_autocmd("BufWinLeave", {
 	group = whitespace_group,
