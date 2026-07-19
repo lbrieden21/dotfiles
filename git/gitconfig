@@ -70,6 +70,7 @@
 
 [core]
 	excludesfile = ~/.gitignore_global
+	pager = less -x4
 
 [pager]
 	# insanely beautiful diffs ==> brew install diff-so-fancy
