@@ -5,6 +5,7 @@ return {
 	dependencies = {
 		"L3MON4D3/LuaSnip",
 		"rafamadriz/friendly-snippets",
+		"moyiz/blink-emoji.nvim",
 	},
 	opts = {
 		keymap = {
@@ -28,6 +29,12 @@ return {
 		-- (a default-on trigger option) picks that up since the cursor lands
 		-- right after the "(" trigger character.
 		signature = { enabled = true },
+		sources = {
+			default = { "lsp", "path", "snippets", "buffer", "emoji" },
+			providers = {
+				emoji = { module = "blink-emoji", name = "Emoji", score_offset = 15, opts = { insert = true } },
+			},
+		},
 		completion = {
 			list = {
 				selection = {

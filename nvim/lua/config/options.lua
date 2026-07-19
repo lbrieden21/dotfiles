@@ -44,9 +44,7 @@ opt.wildignore:append({ "*/tmp/*", "*/node_modules/*" })
 opt.showmatch = true
 
 -- Force error/visual bells off
-opt.errorbells = false
-opt.visualbell = true
-vim.cmd("set t_vb=")
+opt.belloff = "all"
 
 -- Controls the number of lines/chars to keep visible before scrolling
 opt.scrolloff = 3

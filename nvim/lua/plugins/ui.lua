@@ -1,11 +1,7 @@
 return {
 	{
-		"nvim-tree/nvim-web-devicons",
-		lazy = true,
-	},
-	{
 		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
+		dependencies = { "nvim-mini/mini.nvim" },
 		event = "VeryLazy",
 		opts = {
 			options = {
@@ -15,7 +11,7 @@ return {
 	},
 	{
 		"akinsho/bufferline.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
+		dependencies = { "nvim-mini/mini.nvim" },
 		event = "VeryLazy",
 		opts = {},
 	},

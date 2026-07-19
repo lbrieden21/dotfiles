@@ -1,14 +1,9 @@
 return {
-	"heavenshell/vim-jsdoc",
-	ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-	build = "make install",
-	init = function()
-		vim.g.jsdoc_enable_es6 = 1
-	end,
+	"danymat/neogen",
+	dependencies = { "nvim-treesitter/nvim-treesitter" },
+	ft = { "javascript", "javascriptreact", "typescript", "typescriptreact", "python" },
+	opts = { snippet_engine = "luasnip" }, -- LuaSnip already installed via completion.lua
 	keys = {
-		-- g:jsdoc_default_mapping was removed in v0.3, so the old vimrc's
-		-- <leader>pd comment had actually been dead documentation for a
-		-- while - this is the real mapping it always implied.
-		{ "<leader>pd", "<Plug>(jsdoc)" },
+		{ "<leader>pd", function() require("neogen").generate() end, desc = "Generate annotation" },
 	},
 }

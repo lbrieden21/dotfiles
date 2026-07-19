@@ -83,14 +83,25 @@ return {
 			require("nvim-treesitter-textobjects").setup({
 				select = {
 					lookahead = true,
-					keymaps = {
-						["af"] = "@function.outer",
-						["if"] = "@function.inner",
-						["ac"] = "@class.outer",
-						["ic"] = "@class.inner",
-					},
 				},
 			})
+
+			-- select.keymaps was dropped from this plugin's config schema on
+			-- the main branch; keymaps must be wired up explicitly instead.
+			local select = require("nvim-treesitter-textobjects.select")
+			local map = vim.keymap.set
+			map({ "x", "o" }, "af", function() select.select_textobject("@function.outer", "textobjects") end)
+			map({ "x", "o" }, "if", function() select.select_textobject("@function.inner", "textobjects") end)
+			map({ "x", "o" }, "ac", function() select.select_textobject("@class.outer", "textobjects") end)
+			map({ "x", "o" }, "ic", function() select.select_textobject("@class.inner", "textobjects") end)
+
+			-- Replaces vim-pythonsense's function/class jump motions, now
+			-- available in every treesitter-supported language, not just Python.
+			local move = require("nvim-treesitter-textobjects.move")
+			map({ "n", "x", "o" }, "]m", function() move.goto_next_start("@function.outer") end)
+			map({ "n", "x", "o" }, "[m", function() move.goto_previous_start("@function.outer") end)
+			map({ "n", "x", "o" }, "]]", function() move.goto_next_start("@class.outer") end)
+			map({ "n", "x", "o" }, "[[", function() move.goto_previous_start("@class.outer") end)
 		end,
 	},
 }
