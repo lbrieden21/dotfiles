@@ -174,3 +174,5 @@
 
 [include]
 	path = .localgitconfig
+[init]
+	defaultBranch = main
