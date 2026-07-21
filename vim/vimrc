@@ -250,7 +250,7 @@ if s:hname == "lance-2025\n"
   " coc.nvim - LSP-based completion (replaces YouCompleteMe + tern_for_vim)
   " Requires Node.js. Extensions in g:coc_global_extensions are auto-installed.
   " https://github.com/neoclide/coc.nvim
-  Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+  "Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 
   " This plugin adds Copilot-like code completion support to Vim. It uses Ollama
   " as a backend, which can run locally and does not require cloud services,
