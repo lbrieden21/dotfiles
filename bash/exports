@@ -7,8 +7,8 @@ if type mvim >/dev/null 2>/dev/null; then
 elif type nvim >/dev/null 2>/dev/null; then
 	export VISUAL=nvim
 	export EDITOR="$VISUAL"
-	alias vi=nvim
-	alias vim=nvim
+	# alias vi=nvim
+	# alias vim=nvim
 elif type vim >/dev/null 2>/dev/null; then
 	export VISUAL=vim
 	export EDITOR="$VISUAL"
