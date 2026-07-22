@@ -30,6 +30,19 @@ if command -v ag >/dev/null; then
        vim $file +$line
     fi
   }
+  nvg() {
+    local file
+    local line
+
+    OPTIONS=$(ag --nobreak --noheading "$@" | fzf -0 -1 | awk -F: '{print $1, $2}')
+    read -r file line <<<"${OPTIONS}"
+    echo "FILE = ${file}, LINE = ${line}"
+
+    if [[ -n $file ]]
+    then
+       nvim $file +$line
+    fi
+  }
 fi
 
 # Find a usable agent - fixes screen and tmux
