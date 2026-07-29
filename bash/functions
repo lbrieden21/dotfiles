@@ -7,14 +7,6 @@ function bak() {
 	cp "$1" "$1.bak"
 }
 
-function gh() {
-	history | grep "$1"
-}
-
-function ghi() {
-	history | grep -i "$1"
-}
-
 # fuzzy grep open via ag with line number
 if command -v ag >/dev/null; then
   vg() {
