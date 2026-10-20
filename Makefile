@@ -1,6 +1,6 @@
 DIR=$(HOME)/dotfiles
 
-all: symlinks install_vimplug install_fzf install_tmux_plugins
+all: symlinks install_vimplug install_vim_plugins install_fzf install_tmux_plugins
 
 symlinks:
 	@mkdir -p "$$HOME/.config"
@@ -28,8 +28,17 @@ symlinks:
 	done
 
 install_vimplug:
-	curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-		https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	@if [ -f ~/.vim/autoload/plug.vim ]; then \
+		echo "vim-plug already exists at ~/.vim/autoload/plug.vim, skipping download."; \
+	else \
+		curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+			https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim; \
+	fi
+
+# PlugClean! removes plugins no longer in vimrc without prompting, so this also
+# runs with no terminal attached.
+install_vim_plugins: install_vimplug
+	vim +PlugClean! +PlugInstall +qall
 
 gitTools:
 	git clone git@github.com:paulirish/git-recent.git $(DIR)/git-clones/git-recent/
@@ -46,7 +55,9 @@ install_fzf:
 	else \
 		git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; \
 	fi
-	@if [ -x ~/.fzf/install ]; then \
+	@if [ -x ~/.fzf/bin/fzf ] && [ -f ~/.fzf.bash ]; then \
+		echo "fzf already installed at ~/.fzf/bin/fzf, skipping installer."; \
+	elif [ -x ~/.fzf/install ]; then \
 		~/.fzf/install --key-bindings --completion --no-update-rc; \
 	else \
 		echo "fzf installer not found at ~/.fzf/install."; \

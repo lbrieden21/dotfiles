@@ -144,7 +144,9 @@ Plug 'EinfachToll/DidYouMean'
 "Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-git'
 
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install()  }, 'for': ['markdown', 'vim-plug']  }
+" install_sync runs install.sh in the foreground; install() starts it as a
+" terminal job, which keeps +qall from exiting in make install_vim_plugins.
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install_sync(v:true) }, 'for': ['markdown', 'vim-plug']  }
 
 " Python support
 " This small script modifies Vim’s indentation behavior to comply with PEP8 and my aesthetic preferences.
