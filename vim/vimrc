@@ -144,6 +144,8 @@ Plug 'EinfachToll/DidYouMean'
 "Plug 'tpope/vim-markdown', { 'for': 'markdown' }
 Plug 'tpope/vim-git'
 
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install()  }, 'for': ['markdown', 'vim-plug']  }
+
 " Python support
 " This small script modifies Vim’s indentation behavior to comply with PEP8 and my aesthetic preferences.
 Plug 'Vimjas/vim-python-pep8-indent'
