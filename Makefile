@@ -1,6 +1,6 @@
 DIR=$(HOME)/dotfiles
 
-all: symlinks install_vimplug install_fzf
+all: symlinks install_vimplug install_fzf install_tmux_plugins
 
 symlinks:
 	@mkdir -p "$$HOME/.config"
@@ -52,6 +52,16 @@ install_fzf:
 		echo "fzf installer not found at ~/.fzf/install."; \
 		exit 1; \
 	fi
+
+install_tmux_plugins:
+	@mkdir -p ~/.tmux/plugins
+	@for plugin in tmux-resurrect tmux-continuum; do \
+		if [ -d ~/.tmux/plugins/$$plugin/.git ]; then \
+			echo "$$plugin already exists at ~/.tmux/plugins/$$plugin, skipping clone."; \
+		else \
+			git clone --depth 1 https://github.com/tmux-plugins/$$plugin.git ~/.tmux/plugins/$$plugin; \
+		fi; \
+	done
 
 set_locale:
 	@set -e; \

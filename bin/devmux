@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+#
+# devmux - pick projects under ~/Development and open a tmux window for each,
+# in the order they were picked.
+#
+# Usage: devmux [-s session] [-r root]
+#   -s  tmux session name (default: dev)
+#   -r  projects root (default: $DEVMUX_ROOT or ~/Development)
+#
+# If the session already exists the picked windows are added to it, so devmux
+# can be re-run later to open more projects.
+#
+# Menu keys (fzf): TAB marks/unmarks an entry, ENTER opens the marked entries
+# in the order they were marked.
+
+set -euo pipefail
+
+SESSION=dev
+ROOT=${DEVMUX_ROOT:-$HOME/Development}
+
+# Projects that get something other than a single plain window named after
+# the directory. Format: "directory|window name|command to run (optional)".
+# Every other directory under $ROOT gets one window named after itself.
+SPECIAL=(
+	"homelab-ansible|ansible-code|"
+	"homelab-ansible|ansible-deploy|ssh vm-ansible-deploy"
+	"homeassistant-config|homeassistant-config|"
+	"homeassistant-config|homeassistant-deploy|ssh vm-homeassistant"
+)
+
+usage() {
+	sed -n '3,15s/^# \{0,1\}//p' "$0"
+	exit "${1:-0}"
+}
+
+while getopts "s:r:h" opt; do
+	case "$opt" in
+		s) SESSION=$OPTARG ;;
+		r) ROOT=$OPTARG ;;
+		h) usage ;;
+		*) usage 1 ;;
+	esac
+done
+
+command -v tmux >/dev/null || { echo "devmux: tmux not found" >&2; exit 1; }
+command -v fzf >/dev/null || { echo "devmux: fzf not found" >&2; exit 1; }
+[ -d "$ROOT" ] || { echo "devmux: $ROOT is not a directory" >&2; exit 1; }
+
+# Build the menu: one "window name<TAB>directory<TAB>command" line per entry.
+entries=()
+for path in "$ROOT"/*/; do
+	dir=$(basename "$path")
+	special=0
+	for spec in "${SPECIAL[@]}"; do
+		IFS='|' read -r sdir sname scmd <<<"$spec"
+		if [ "$sdir" = "$dir" ]; then
+			entries+=("$sname"$'\t'"$dir"$'\t'"$scmd")
+			special=1
+		fi
+	done
+	[ "$special" -eq 1 ] || entries+=("$dir"$'\t'"$dir"$'\t')
+done
+
+# fzf prints multi-select results in the order they were marked.
+picked=$(printf '%s\n' "${entries[@]}" | fzf --multi --delimiter=$'\t' \
+	--with-nth=1 --height=~100% --reverse --cycle \
+	--header='TAB: mark (in open order)   ENTER: open   ESC: cancel' \
+	--prompt="$SESSION> ") || exit 0
+[ -n "$picked" ] || exit 0
+
+# A session that doesn't exist yet starts with a window at $ROOT itself.
+if ! tmux has-session -t "=$SESSION" 2>/dev/null; then
+	tmux new-session -d -s "$SESSION" -n development -c "$ROOT"
+fi
+
+while IFS=$'\t' read -r name dir cmd; do
+	win=$(tmux new-window -d -P -F '#{window_id}' -t "=$SESSION:" -n "$name" -c "$ROOT/$dir")
+	# Type the command into the window's shell rather than running it as the
+	# window's process, so exiting it (e.g. leaving ssh) drops back to a shell.
+	if [ -n "$cmd" ]; then
+		tmux send-keys -t "$win" "$cmd" Enter
+	fi
+done <<<"$picked"
+
+if [ -n "${TMUX:-}" ]; then
+	tmux switch-client -t "=$SESSION"
+else
+	tmux attach-session -t "=$SESSION"
+fi
