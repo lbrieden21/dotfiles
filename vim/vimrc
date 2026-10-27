@@ -976,8 +976,20 @@ autocmd User fugitive
   \   nnoremap <buffer> .. :edit %:h<CR> |
   \ endif
 
-" Generate a random password
-command! -nargs=1 GeneratePassword execute ":r !openssl rand -base64 48 | tr -d '*/\\\\_-' | cut -c1-<args>"
+" Generate a random password from letters, digits and the symbols + , - . = ^ _
+" (others break shells, URLs, config files, etc.), guaranteed to contain a
+" lower, upper, digit and symbol. :GeneratePassword [length], default 24
+function! s:GeneratePassword(len) abort
+  let len = max([str2nr(a:len), 4])
+  while 1
+    let pw = system('LC_ALL=C tr -dc "[:alnum:]+,.=^_-" < /dev/urandom | head -c ' . len)
+    if pw =~# '\l' && pw =~# '\u' && pw =~# '\d' && pw =~# '[^[:alnum:]]'
+      break
+    endif
+  endwhile
+  call append(line('.'), pw)
+endfunction
+command! -nargs=? GeneratePassword call s:GeneratePassword(empty(<q-args>) ? 24 : <q-args>)
 
 " Display timestamp under cursor as date
 if has('linux')

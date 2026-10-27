@@ -217,10 +217,19 @@ map("n", "<leader>n", ":setlocal number!<CR>:setlocal relativenumber!<CR>")
 -- unmap F1 - stupid help key
 map({ "i", "n", "v" }, "<F1>", "<Esc>")
 
--- Generate a random password
+-- Generate a random password from letters, digits and the symbols + , - . = ^ _
+-- (others break shells, URLs, config files, etc.), guaranteed to contain a
+-- lower, upper, digit and symbol. :GeneratePassword [length], default 24
 vim.api.nvim_create_user_command("GeneratePassword", function(opts)
-	vim.cmd("r !openssl rand -base64 48 | tr -d '*/\\_-' | cut -c1-" .. opts.args)
-end, { nargs = 1 })
+	local len = math.max(tonumber(opts.args) or 24, 4)
+	local f = assert(io.open("/dev/urandom", "rb"))
+	local pw
+	repeat
+		pw = f:read(len * 8):gsub("[^%w+,.=^_-]", ""):sub(1, len)
+	until #pw == len and pw:find("%l") and pw:find("%u") and pw:find("%d") and pw:find("%p")
+	f:close()
+	vim.api.nvim_put({ pw }, "l", true, false)
+end, { nargs = "?" })
 
 -- Display timestamp under cursor as date
 if vim.fn.has("linux") == 1 then
