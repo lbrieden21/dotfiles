@@ -28,37 +28,33 @@ elif [[ -x /usr/local/bin/brew ]]; then
 	HOMEBREW_PREFIX=/usr/local
 fi
 
-if [[ -n "$HOMEBREW_PREFIX" ]]; then
-	# Source the unversioned share/ path, not etc/profile.d/bash_completion.sh:
-	# that script sources Cellar/bash-completion@2/<version>/..., bash-completion
-	# lazy-loads per-command completions from the directory it was sourced from,
-	# and brew cleanup deletes that directory -- so every shell open across an
-	# upgrade loses completion for any command not yet completed. The guards
-	# below are the ones profile.d/bash_completion.sh applies.
-	if [[ -r "${HOMEBREW_PREFIX}/share/bash-completion/bash_completion" ]]; then
-		if [[ -z "${BASH_COMPLETION_VERSINFO-}" ]] && shopt -q progcomp &&
-			(( BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) )); then
-			[[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion" ]] &&
-				source "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
-			source "${HOMEBREW_PREFIX}/share/bash-completion/bash_completion"
-		fi
-	else
-		for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
-			[[ -r "${COMPLETION}" ]] && source "${COMPLETION}"
+# Source bash-completion's main script directly; the first one found wins.
+# Not via any etc/profile.d/bash_completion.sh wrapper: Homebrew's hard-codes
+# Cellar/bash-completion@2/<version>/, bash-completion lazy-loads per-command
+# completions from the directory it was sourced from, and brew cleanup deletes
+# that directory -- so shells open across an upgrade lose completion.
+# The main script doesn't guard against loading twice (the wrappers did), so
+# guard here: the system bashrc/profile may already have loaded it (Fedora,
+# Arch, Debian/Ubuntu login shells), as may re-sourcing this file.
+if [[ -z "${BASH_COMPLETION_VERSINFO-}" ]] && shopt -q progcomp; then
+	[[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion" ]] &&
+		source "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
+	for __bc_file in \
+		${HOMEBREW_PREFIX:+"${HOMEBREW_PREFIX}/share/bash-completion/bash_completion"} \
+		/opt/local/share/bash-completion/bash_completion \
+		/usr/share/bash-completion/bash_completion \
+		/usr/local/share/bash-completion/bash_completion
+	do
+		[[ -r "$__bc_file" ]] && { source "$__bc_file"; break; }
+	done
+	# No bash-completion anywhere: fall back to Homebrew's per-formula scripts.
+	# Those that call bash-completion's helper functions won't work.
+	if [[ -z "${BASH_COMPLETION_VERSINFO-}" && -n "$HOMEBREW_PREFIX" ]]; then
+		for __bc_file in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+			[[ -r "$__bc_file" ]] && source "$__bc_file"
 		done
 	fi
-elif type port >/dev/null 2>/dev/null && [[ -f /opt/local/etc/profile.d/bash_completion.sh ]]; then
-	source /opt/local/etc/profile.d/bash_completion.sh
-elif [[ -f /usr/share/bash-completion/bash_completion ]]; then
-	source /usr/share/bash-completion/bash_completion
-elif [[ -f /etc/bash_completion ]]; then
-	source /etc/bash_completion
-elif [[ -f /usr/local/share/bash-completion/bash_completion ]]; then
-	source /usr/local/share/bash-completion/bash_completion
-elif [[ -f /usr/local/etc/bash_completion ]]; then
-	source /usr/local/etc/bash_completion
-elif [[ -f /etc/profile.d/bash_completion.sh ]]; then
-	source /etc/profile.d/bash_completion.sh
+	unset -v __bc_file
 fi
 
 # fzf via git install
