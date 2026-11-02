@@ -29,8 +29,19 @@ elif [[ -x /usr/local/bin/brew ]]; then
 fi
 
 if [[ -n "$HOMEBREW_PREFIX" ]]; then
-	if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
-		source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+	# Source the unversioned share/ path, not etc/profile.d/bash_completion.sh:
+	# that script sources Cellar/bash-completion@2/<version>/..., bash-completion
+	# lazy-loads per-command completions from the directory it was sourced from,
+	# and brew cleanup deletes that directory -- so every shell open across an
+	# upgrade loses completion for any command not yet completed. The guards
+	# below are the ones profile.d/bash_completion.sh applies.
+	if [[ -r "${HOMEBREW_PREFIX}/share/bash-completion/bash_completion" ]]; then
+		if [[ -z "${BASH_COMPLETION_VERSINFO-}" ]] && shopt -q progcomp &&
+			(( BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2) )); then
+			[[ -r "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion" ]] &&
+				source "${XDG_CONFIG_HOME:-$HOME/.config}/bash_completion"
+			source "${HOMEBREW_PREFIX}/share/bash-completion/bash_completion"
+		fi
 	else
 		for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
 			[[ -r "${COMPLETION}" ]] && source "${COMPLETION}"
